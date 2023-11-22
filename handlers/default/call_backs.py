@@ -1,13 +1,9 @@
 from loader import bot
+from states.bot_states import States
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    if call.data == "Add_city":
-        bot.answer_callback_query(call.id, "Add_city")
-    elif call.data == "button2":
-        bot.answer_callback_query(call.id, "Вы выбрали кнопку 2")
-    elif call.data == "button3":
-        bot.answer_callback_query(call.id, "Вы выбрали кнопку 3")
-    elif call.data == "button4":
-        bot.answer_callback_query(call.id, "Вы выбрали кнопку 4")
+    if call.data == "Cancel":
+        bot.delete_state(call.message.from_user.id, call.message.chat.id)
+        bot.send_message(call.message.chat.id, "Cancelled!")

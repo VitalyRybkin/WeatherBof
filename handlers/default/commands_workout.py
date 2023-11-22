@@ -2,8 +2,20 @@ from random import choice
 
 from handlers.default import help
 from loader import bot
+from states.bot_states import States
 from utils.reply_center import Reply
 from data.globals import COUNT_NOT_DEFINED_TYPINGS as count_not_defines
+
+
+@bot.message_handler(func=lambda message: message.text == "\U0001F3E1 Add city")
+def add_city(message):
+    bot.send_message(message.chat.id, "Type in city name:")
+    bot.set_state(message.from_user.id, States.add_city, message.chat.id)
+
+
+@bot.message_handler(func=lambda message: message.text == "\U0000274C Cancel")
+def add_city(message):
+    bot.delete_state(message.from_user.id, message.chat.id)
 
 
 @bot.message_handler(content_types=["text"])
@@ -13,8 +25,10 @@ def typed_commands(message):
     reply_from = Reply(message)
     if message.text.lower().strip() == "start":
         count_not_defines = 0
-        bot.send_message(message.chat.id, 'I\'m already running, but anyway...\n'
-                         'Here\'s some help for you:')
+        bot.send_message(
+            message.chat.id,
+            "I'm already running, but anyway...\n" "Here's some help for you:",
+        )
         help.help_message(message)
     elif message.text.lower().strip() == "help":
         count_not_defines = 0
@@ -42,4 +56,3 @@ def typed_commands(message):
         else:
             count_not_defines += 1
             bot.send_message(message.chat.id, choice(reply_from.not_defined))
-
