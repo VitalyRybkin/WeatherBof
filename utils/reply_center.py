@@ -34,8 +34,8 @@ class Reply:
             "Say that again, pls!",
             "Pardon?!",
             "I beg your a pardon?!",
-            "Wrong command again! \N{loudly crying face}",
-            "Common, you're wrong again! \N{unamused face}",
+            "This is wrong command! \N{loudly crying face}",
+            "You're wrong! \N{unamused face}",
         ]
         self.__tired: list = [
             "you have to be more accurate with your typing! \U0001F928",
@@ -46,7 +46,7 @@ class Reply:
             "thing's are not that simple, but I believe in you! Type again, pls!",
         ]
         self.__help: dict = {
-            "/start": "Start weathering, start seeing the future!",
+            # "/start": "Start weathering, start seeing the future!",
             "/my": "I'll send you the weather forecast of your favorite city (if there's one)",
             "/del": "Just remove your favorite city out of our minds for good!",
             "/change": "Yes, we can just switch to another favorite place!",

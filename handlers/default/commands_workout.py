@@ -1,7 +1,6 @@
 from random import choice
 
 from handlers.default import help
-from handlers.users import start
 from loader import bot
 from utils.reply_center import Reply
 from data.globals import COUNT_NOT_DEFINED_TYPINGS as count_not_defines
@@ -12,12 +11,11 @@ def typed_commands(message):
     global count_not_defines
 
     reply_from = Reply(message)
-    if (
-        message.text.lower().strip() == "start"
-        or message.text.lower().strip() == "/start"
-    ):
+    if message.text.lower().strip() == "start":
         count_not_defines = 0
-        start.start_command(message)
+        bot.send_message(message.chat.id, 'I\'m already running, but anyway...\n'
+                         'Here\'s some help for you:')
+        help.help_message(message)
     elif message.text.lower().strip() == "help":
         count_not_defines = 0
         help.help_message(message)
@@ -44,3 +42,4 @@ def typed_commands(message):
         else:
             count_not_defines += 1
             bot.send_message(message.chat.id, choice(reply_from.not_defined))
+

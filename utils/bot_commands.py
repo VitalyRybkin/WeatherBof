@@ -4,7 +4,7 @@ from telebot.types import BotCommand
 def set_menu_commands(bot):
     bot.set_my_commands(
         [
-            BotCommand(command="start", description="start weather forecasting"),
+            # BotCommand(command="start", description="start weather forecasting"),
             BotCommand(command="my", description="your city weather forecast"),
             BotCommand(command="del", description="delete your city"),
             BotCommand(command="change", description="change your city"),
