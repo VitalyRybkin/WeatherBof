@@ -1,15 +1,17 @@
 from random import choice
 
 from handlers.default import help
+from keyboards.reply.reply_buttons import reply_cancel_button
 from loader import bot
 from states.bot_states import States
 from utils.reply_center import Reply
 from data.globals import COUNT_NOT_DEFINED_TYPINGS as count_not_defines
 
 
-@bot.message_handler(func=lambda message: message.text == "\U0001F3E1 Add city")
+@bot.message_handler(func=lambda message: message.text == "\U0001F3E1 Set city")
 def add_city(message):
-    bot.send_message(message.chat.id, "Type in city name:")
+    cancel_button = reply_cancel_button()
+    bot.send_message(message.chat.id, "Type in city name:", reply_markup=cancel_button)
     bot.set_state(message.from_user.id, States.add_city, message.chat.id)
 
 

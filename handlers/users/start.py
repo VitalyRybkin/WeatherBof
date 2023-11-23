@@ -2,7 +2,7 @@
 # from telebot import types
 
 from keyboards.inline.inline_buttons import show_weather
-from keyboards.reply.reply_buttons import reply_add_button
+from keyboards.reply.reply_buttons import reply_set_button
 from loader import bot
 from midwares.db_conn_center import read_data, write_data
 from midwares.sql_lib import Users
@@ -39,12 +39,12 @@ def start_command(message):
             message.chat.id,
             f"Hello, {message.from_user.first_name}!\n" f"Welcome back!",
         )
-        if get_user_info[0][1] == "":
-            add_city_keyboard = reply_add_button()
+        if get_user_info[0][1] is None:
+            set_city_keyboard = reply_set_button()
             bot.send_message(
                 message.chat.id,
                 "You haven't set your favorite city, yet!",
-                reply_markup=add_city_keyboard,
+                reply_markup=set_city_keyboard,
             )
         else:
             check_weather_keyboard = show_weather()
