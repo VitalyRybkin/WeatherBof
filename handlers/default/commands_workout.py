@@ -1,25 +1,25 @@
 from random import choice
 
 from handlers.default import help
+from handlers.users import set_city
 from keyboards.reply.reply_buttons import reply_cancel_button
 from loader import bot
 from states.bot_states import States
 from utils.reply_center import Reply
+from utils.signs_text import ButtonSigns
 from data.globals import COUNT_NOT_DEFINED_TYPINGS as count_not_defines
 
 
-@bot.message_handler(func=lambda message: message.text == "\U0001F3E1 Set city")
+@bot.message_handler(func=lambda message: message.text == ButtonSigns.set_city)
 def setting_city(message):
     cancel_button = reply_cancel_button()
     bot.send_message(message.chat.id, "Type in city name:", reply_markup=cancel_button)
     bot.set_state(message.from_user.id, States.set_city, message.chat.id)
 
 
-@bot.message_handler(func=lambda message: message.text == "\U0000274C Cancel")
+@bot.message_handler(func=lambda message: message.text == ButtonSigns.cancel)
 def cancelling_state(message):
-    print(bot.current_states.get_state(message.chat.id, message.from_user.id))
     bot.delete_state(message.from_user.id, message.chat.id)
-    print('cancelled')
 
 
 @bot.message_handler(content_types=["text"])
@@ -37,6 +37,9 @@ def typed_commands(message):
     elif message.text.lower().strip() == "help":
         count_not_defines = 0
         help.help_message(message)
+    elif message.text.lower().strip() == "set":
+        count_not_defines = 0
+        set_city.set_city(message)
     elif (
         message.text.lower().strip() in ["hi", "hello"]
         or "hi" in message.text.lower().strip()

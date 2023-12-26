@@ -1,6 +1,7 @@
 from keyboards.reply.reply_buttons import reply_cancel_button
 from loader import bot
 from states.bot_states import States
+from utils.signs_text import ButtonSigns
 
 
 @bot.message_handler(commands=["set"])
@@ -14,7 +15,7 @@ def set_city(message):
         bot.set_state(message.from_user.id, States.set_city, message.chat.id)
     # print('set city')
     # print(bot.current_states.get_state(message.chat.id, message.from_user.id))
-    if message.text == "\U0000274C Cancel":
+    if message.text == ButtonSigns.cancel:
         bot.delete_state(message.from_user.id, message.chat.id)
         return
     cancel_button = reply_cancel_button()
