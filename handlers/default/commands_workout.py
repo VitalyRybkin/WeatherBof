@@ -17,6 +17,7 @@ def setting_city(message):
 
 @bot.message_handler(func=lambda message: message.text == "\U0000274C Cancel")
 def cancelling_state(message):
+    print(bot.current_states.get_state(message.chat.id, message.from_user.id))
     bot.delete_state(message.from_user.id, message.chat.id)
     print('cancelled')
 
