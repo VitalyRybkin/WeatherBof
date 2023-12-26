@@ -48,6 +48,7 @@ class Reply:
         self.__help: dict = {
             # "/start": "Start weathering, start seeing the future!",
             "/my": "I'll send you the weather forecast of your favorite city (if there's one)",
+            "/set": "I'll remember your favorite city (if there's no one)",
             "/del": "Just remove your favorite city out of our minds for good!",
             "/change": "Yes, we can just switch to another favorite place!",
             "/wishlist": "Check it out!",

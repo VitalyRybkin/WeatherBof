@@ -43,7 +43,7 @@ def start_command(message):
             set_city_keyboard = reply_set_button()
             bot.send_message(
                 message.chat.id,
-                "You haven't set your favorite city, yet!",
+                "You haven't /set your favorite city, yet!",
                 reply_markup=set_city_keyboard,
             )
         else:
