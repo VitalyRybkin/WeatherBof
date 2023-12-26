@@ -14,8 +14,8 @@ def show_weather():
 
 def inline_add_button():
     markup = types.InlineKeyboardMarkup()
-    check = types.InlineKeyboardButton("\U0000274C Cancel", callback_data="Cancel")
-    stop = types.InlineKeyboardButton("\U0001F3E1 Set city", callback_data="Set city")
-    markup.row(check, stop)
+    cancel = types.InlineKeyboardButton("\U0000274C Cancel", callback_data="Cancel")
+    add_city = types.InlineKeyboardButton("\U0001F3E1 Add city", callback_data="Add city")
+    markup.row(cancel, add_city)
 
     return markup

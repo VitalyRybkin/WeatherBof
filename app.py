@@ -11,6 +11,7 @@ import os
 
 bot.register_message_handler(handlers.users.start)
 bot.register_message_handler(handlers.default.help)
+bot.register_message_handler(handlers.users.wishlist)
 bot.register_message_handler(handlers.default.call_backs)
 bot.register_message_handler(handlers.default.commands_workout)
 

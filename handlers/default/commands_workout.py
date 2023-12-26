@@ -12,7 +12,7 @@ from data.globals import COUNT_NOT_DEFINED_TYPINGS as count_not_defines
 def add_city(message):
     cancel_button = reply_cancel_button()
     bot.send_message(message.chat.id, "Type in city name:", reply_markup=cancel_button)
-    bot.set_state(message.from_user.id, States.add_city, message.chat.id)
+    bot.set_state(message.from_user.id, States.set_city, message.chat.id)
 
 
 @bot.message_handler(func=lambda message: message.text == "\U0000274C Cancel")
