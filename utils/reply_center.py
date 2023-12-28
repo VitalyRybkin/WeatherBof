@@ -47,14 +47,14 @@ class Reply:
         ]
         self.__help: dict = {
             # "/start": "Start weathering, start seeing the future!",
-            "/my": "I'll send you the weather forecast of your favorite city (if there's one)",
-            "/set": "I'll remember your favorite city (if there's no one)",
-            "/del": "Just remove your favorite city out of our minds for good!",
-            "/change": "Yes, we can just switch to another favorite place!",
-            "/wishlist": "Check it out!",
-            "/add": "Add a new place to a wishlist and joy forecasting!",
+            "/my": "I'll send you the weather forecast of your favorite location (if there's one)",
+            "/set": "I'll remember your favorite location (if there's no one) or change it",
+            "/del": "Just remove your favorite location out of our minds for good!",
+            # "/change": "Yes, we can just switch to another favorite place!",
+            "/wishlist": "Check your wishlist out!",
+            "/add": "Add a new place to a wishlist and enjoy forecasting!",
             "/empty": "Just move everything out of wishlist!",
-            "/remove": "Remove favorite city from your wishlist, but not out of your memory!",
+            "/remove": "Remove favorite location from your wishlist, but not out of your memory!",
             "/help": "I'll start helping you over!",
         }
 

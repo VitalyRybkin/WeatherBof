@@ -5,14 +5,14 @@ def set_menu_commands(bot):
     bot.set_my_commands(
         [
             # BotCommand(command="start", description="start weather forecasting"),
-            BotCommand(command="my", description="your city weather forecast"),
-            BotCommand(command="set", description="set favorite your city"),
-            BotCommand(command="del", description="delete favorite your city"),
-            BotCommand(command="change", description="change your city"),
+            BotCommand(command="my", description="your favorite location weather"),
+            BotCommand(command="set", description="set/reset favorite your location"),
+            BotCommand(command="del", description="delete your favorite location"),
+            # BotCommand(command="change", description="change your favorite location"),
             BotCommand(command="wishlist", description="wishlist output"),
-            BotCommand(command="add", description="add place to a wish list"),
+            BotCommand(command="add", description="add location to a wish list"),
             BotCommand(command="empty", description="clear your wishlist"),
-            BotCommand(command="remove", description="remove city from your wishlist"),
+            BotCommand(command="remove", description="remove location from your wishlist"),
             BotCommand(command="help", description="start helping me"),
         ]
     )
