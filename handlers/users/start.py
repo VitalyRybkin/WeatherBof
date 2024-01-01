@@ -10,6 +10,7 @@ from midwares.db_conn_center import read_data, write_data
 from midwares.sql_lib import Users
 from states.bot_states import States
 from utils.reply_center import Reply
+import data.globals
 
 
 @bot.message_handler(commands=["start"])
@@ -35,6 +36,11 @@ def start_command(message):
         res = "\n".join("{} - {}".format(k, v) for k, v in reply_from.help.items())
         bot.send_message(chat_id, res)
         bot.send_message(chat_id, "Enjoy!")
+
+        if user_id not in data.globals.users_dict:
+            data.globals.users_dict.setdefault(user_id, dict())
+            data.globals.users_dict[user_id]['count_not_defined'] = 0
+
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)
     else:
@@ -48,15 +54,16 @@ def start_command(message):
             cancel = inline_cancel_btn()
             set_city = inline_set_location_prompt_btn()
             set_city_keyboard = markup.add(set_city, cancel)
-            bot.send_message(
+            msg = bot.send_message(
                 chat_id,
                 "You haven't /set your favorite city, yet!",
                 reply_markup=set_city_keyboard,
             )
         else:
             check_weather_keyboard = show_weather()
-            bot.send_message(
+            msg = bot.send_message(
                 chat_id,
                 f"Your favorite city: \n{get_user_info[0][1]}",
                 reply_markup=check_weather_keyboard,
             )
+        data.globals.users_dict[user_id]['message_id'] = msg.message_id

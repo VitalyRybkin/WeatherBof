@@ -16,7 +16,7 @@ def show_weather():
 def inline_add_button():
     markup = types.InlineKeyboardMarkup()
     cancel = types.InlineKeyboardButton("\U0000274C Cancel", callback_data="Cancel")
-    add_city = types.InlineKeyboardButton("\U0001F3E1 Add city", callback_data="Add city")
+    add_city = types.InlineKeyboardButton("\U0001F3E1 Add city", callback_data="Add location")
     markup.row(cancel, add_city)
 
     return markup
@@ -31,8 +31,24 @@ def inline_cancel_btn():
 
 
 def inline_set_location_prompt_btn():
-    return types.InlineKeyboardButton(ButtonSigns.set_favorite_location, callback_data=f"Set prompt")
+    return types.InlineKeyboardButton(ButtonSigns.setting_location, callback_data=f"Set prompt")
+
+
+def inline_set_location_btn(to_where, location):
+    return types.InlineKeyboardButton(ButtonSigns.set_favorite_location, callback_data=f"Add|{to_where}|{location}")
+
+
+def inline_add_location_prompt_btn():
+    return types.InlineKeyboardButton(ButtonSigns.adding_location, callback_data=f"Add prompt")
 
 
 def inline_add_location_btn(to_where, location):
-    return types.InlineKeyboardButton(ButtonSigns.add_location, callback_data=f"Add|{to_where}|{location}")
+    return types.InlineKeyboardButton(ButtonSigns.add_wishlist_location, callback_data=f"Add|{to_where}|{location}")
+
+
+def inline_change_location_prompt_btn():
+    return types.InlineKeyboardButton(ButtonSigns.changing_location, callback_data=f"Change prompt")
+
+
+def inline_change_location_btn(to_where, location):
+    return types.InlineKeyboardButton(ButtonSigns.change_favorite_location, callback_data=f"Add|{to_where}|{location}")
