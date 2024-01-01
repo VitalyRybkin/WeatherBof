@@ -17,11 +17,11 @@ def callback_query(call):
         bot.send_message(call.message.chat.id, "\U0000274C Canceled!")
     elif call.data == "Set prompt" or call.data == "Add prompt" or call.data == "Change prompt":
         bot.set_state(call.from_user.id, States.search_location, call.message.chat.id)
-        markup = types.InlineKeyboardMarkup()
         States.search_location.operation = call.data
+        markup = types.InlineKeyboardMarkup()
         cancel_keyboard = markup.row(inline_cancel_btn())
         msg = bot.send_message(
-            call.message.chat.id, "Type in city name:", reply_markup=cancel_keyboard
+            call.message.chat.id, "Type in location name:", reply_markup=cancel_keyboard
         )
     elif parse_call_data[0] == "Add":
         if parse_call_data[1] == "favorite":
@@ -36,10 +36,11 @@ def callback_query(call):
             query = (
                 f"SELECT {Favorites.user_favorite_city_name} "
                 f"FROM {Favorites.table_name} "
-                f"WHERE {Favorites.favorites_user_id}={call.from_user.id}"
+                f"WHERE {Favorites.favorites_user_id}={call.from_user.id} "
+                f"AND {Favorites.user_favorite_city_name}='{parse_call_data[2]}'"
             )
             get_wishlist_info = read_data(query)
-
+            print(get_wishlist_info)
             if not get_wishlist_info:
                 bot.send_message(call.message.chat.id, "Location added to wishlist!")
                 query = (
@@ -50,8 +51,19 @@ def callback_query(call):
                 write_data(query)
             else:
                 bot.send_message(call.message.chat.id, "Location is in your wishlist!")
+                markup = types.InlineKeyboardMarkup()
+                cancel_keyboard = markup.row(inline_cancel_btn())
+                msg = bot.send_message(
+                    call.message.chat.id, "Type in location name:", reply_markup=cancel_keyboard
+                )
+                bot.edit_message_reply_markup(
+                                call.message.chat.id,
+                                message_id=data.globals.users_dict[call.from_user.id]['message_id'],
+                                reply_markup="")
+                data.globals.users_dict[call.from_user.id]['message_id'] = msg.message_id
                 return
-        bot.set_state(call.message.from_user.id, States.cancel, call.message.chat.id)
+
+        bot.delete_state(call.from_user.id, call.message.chat.id)
 
     bot.edit_message_reply_markup(
         call.message.chat.id,

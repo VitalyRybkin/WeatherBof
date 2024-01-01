@@ -22,5 +22,6 @@ def wishlist_command(message):
         msg = bot.send_message(message.chat.id, 'Your wishlist is empty!', reply_markup=add_city_menu)
         data.globals.users_dict[message.from_user.id]['message_id'] = msg.message_id
     else:
-        # TODO if wishlist is not empty
-        pass
+        for _ in get_wishlist:
+            print(_)
+

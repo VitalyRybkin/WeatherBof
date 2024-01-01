@@ -72,7 +72,7 @@ def search_location(message):
         bot.send_message(chat_id, response.json()["error"]["message"])
         markup = types.InlineKeyboardMarkup()
         cancel_keyboard = markup.row(inline_cancel_btn())
-        msg = bot.send_message(chat_id, "Type in city name:", reply_markup=cancel_keyboard)
+        msg = bot.send_message(chat_id, "Type in location name:", reply_markup=cancel_keyboard)
     else:
         markup = types.InlineKeyboardMarkup()
         set_location_keyboard = None
