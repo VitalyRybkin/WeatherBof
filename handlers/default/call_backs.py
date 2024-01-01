@@ -23,6 +23,10 @@ def callback_query(call):
         msg = bot.send_message(
             call.message.chat.id, "Type in location name:", reply_markup=cancel_keyboard
         )
+    elif call.data == "Clear wishlist":
+        query = (f"DELETE FROM {Favorites.table_name} "
+                 f"WHERE {Favorites.favorites_user_id}={call.from_user.id}")
+        write_data(query)
     elif parse_call_data[0] == "Add":
         if parse_call_data[1] == "favorite":
             bot.send_message(call.message.chat.id, "Favorite location set!")
@@ -32,6 +36,7 @@ def callback_query(call):
                 f"WHERE {Users.user_id}={call.from_user.id}"
             )
             write_data(query)
+            bot.send_message(call.message.chat.id, "Your wishlist is empty now!")
         elif parse_call_data[1] == "wishlist":
             query = (
                 f"SELECT {Favorites.user_favorite_city_name} "

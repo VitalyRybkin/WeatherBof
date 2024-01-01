@@ -52,3 +52,7 @@ def inline_change_location_prompt_btn():
 
 def inline_change_location_btn(to_where, location):
     return types.InlineKeyboardButton(ButtonSigns.change_favorite_location, callback_data=f"Add|{to_where}|{location}")
+
+
+def inline_empty_wishlist_btn():
+    return types.InlineKeyboardButton(ButtonSigns.clear_wishlist, callback_data="Clear wishlist")
