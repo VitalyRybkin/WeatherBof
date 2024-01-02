@@ -8,6 +8,7 @@ class ButtonSigns:
     adding_location: str = "\U0001F5C3 Add location"
     set_favorite_location: str = "\U00002705 Set"
     add_wishlist_location: str = "\U0001F5C3 Add"
-    changing_location: str = "\U0001F3E1 Change location"
+    changing_location: str = "\U0001F3E1 Change"
     change_favorite_location: str = "\U00002705 Change"
     clear_wishlist: str = "\U0001F5D1 Clear"
+    set_wishlist: str = "\U00002705 Set wishlist"

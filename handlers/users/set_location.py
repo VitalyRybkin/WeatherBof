@@ -36,8 +36,7 @@ def set_city_prompt(message):
             "You haven't set your favorite location, yet!",
             reply_markup=set_location_keyboard,
         )
-        data.globals.users_dict[user_id]['message_id'] = msg.message_id
-        print(data.globals.users_dict[user_id]['message_id'])
+        # data.globals.users_dict[user_id]['message_id'] = msg.message_id
     else:
         markup = types.InlineKeyboardMarkup()
         cancel = inline_cancel_btn()
@@ -46,7 +45,7 @@ def set_city_prompt(message):
         msg = bot.send_message(chat_id,
                                f"Your favorite location name: {get_user_info[0][1]}",
                                reply_markup=change_location_keyboard)
-        data.globals.users_dict[user_id]['message_id'] = msg.message_id
+    data.globals.users_dict[user_id]['message_id'] = msg.message_id
 
 
 @bot.message_handler(state=States.search_location)
@@ -72,7 +71,7 @@ def search_location(message):
         bot.send_message(chat_id, response.json()["error"]["message"])
         markup = types.InlineKeyboardMarkup()
         cancel_keyboard = markup.row(inline_cancel_btn())
-        msg = bot.send_message(chat_id, "Type in location name:", reply_markup=cancel_keyboard)
+        msg = bot.send_message(chat_id, "\U0001F524 Type in location name:", reply_markup=cancel_keyboard)
     else:
         markup = types.InlineKeyboardMarkup()
         set_location_keyboard = None

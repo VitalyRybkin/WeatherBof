@@ -7,3 +7,4 @@ class States(StatesGroup):
     search_location = State()
     help = State()
     cancel = State()
+    change_wishlist = State()

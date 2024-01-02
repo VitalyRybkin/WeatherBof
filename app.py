@@ -13,13 +13,14 @@ from data import config
 import os
 import data.globals
 
+bot.register_message_handler(handlers.default.call_backs)
 bot.register_message_handler(handlers.users.start)
 bot.register_message_handler(handlers.default.help)
 bot.register_message_handler(handlers.users.wishlist)
 bot.register_message_handler(handlers.users.set_location)
 bot.register_message_handler(handlers.users.add_location)
 bot.register_message_handler(handlers.users.empty)
-bot.register_message_handler(handlers.default.call_backs)
+bot.register_message_handler(handlers.users.change)
 bot.register_message_handler(handlers.default.commands_workout)
 
 

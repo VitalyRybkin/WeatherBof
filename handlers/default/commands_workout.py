@@ -23,7 +23,7 @@ def typed_commands(message):
         help.help_message(message)
     elif message.text.lower().strip() == "set":
         global_var.count_not_defined_typings = 0
-        set_city.search_location(message)
+        set_location.search_location(message)
     elif (
         message.text.lower().strip() in ["hi", "hello"]
         or "hi" in message.text.lower().strip()

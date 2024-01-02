@@ -63,7 +63,7 @@ def start_command(message):
             check_weather_keyboard = show_weather()
             msg = bot.send_message(
                 chat_id,
-                f"Your favorite city: \n{get_user_info[0][1]}",
+                f"\U0001F3D9 Your favorite city: \n{get_user_info[0][1]}",
                 reply_markup=check_weather_keyboard,
             )
         data.globals.users_dict[user_id]['message_id'] = msg.message_id
