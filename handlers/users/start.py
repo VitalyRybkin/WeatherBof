@@ -44,6 +44,7 @@ def start_command(message):
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)
     else:
+        # TODO delete message if available
         bot.send_message(
             chat_id,
             f"Hello, {message.from_user.first_name}!\n" f"Welcome back!",

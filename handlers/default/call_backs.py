@@ -16,6 +16,7 @@ def cancel(call):
         call.message.chat.id,
         message_id=data.globals.users_dict[call.from_user.id]['message_id'],
         reply_markup="")
+    data.globals.users_dict[call.from_user.id]['message_id'] = 0
 
 
 @bot.callback_query_handler(
@@ -44,6 +45,10 @@ def clear_wishlist(call):
         call.message.chat.id,
         message_id=data.globals.users_dict[call.from_user.id]['message_id'],
         reply_markup="")
+    # bot.send_message(call.message.chat.id, "Your /wishlist is empty! /add location?")
+    bot.send_message(call.message.chat.id, "\U00002705 Your wishlist is empty now! /add location?")
+    bot.delete_state(call.from_user.id, call.message.chat.id)
+    data.globals.users_dict[call.from_user.id]['message_id'] = 0
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "Change wishlist")
@@ -59,12 +64,12 @@ def change_wishlist(call):
         message_id=data.globals.users_dict[call.from_user.id]['message_id'],
         reply_markup="")
     bot.send_message(call.message.chat.id, "New /wishlist was set!")
+    data.globals.users_dict[call.from_user.id]['message_id'] = 0
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     parse_call_data = call.data.split("|")
-    msg = call.message
 
     if parse_call_data[0] == "Add":
         if parse_call_data[1] == "favorite":
@@ -75,7 +80,6 @@ def callback_query(call):
                 f"WHERE {Users.user_id}={call.from_user.id}"
             )
             write_data(query)
-            bot.send_message(call.message.chat.id, "\U00002705 Your wishlist is empty now!")
         elif parse_call_data[1] == "wishlist":
             query = (
                 f"SELECT {Favorites.user_favorite_city_name} "
@@ -84,7 +88,7 @@ def callback_query(call):
                 f"AND {Favorites.user_favorite_city_name}='{parse_call_data[2]}'"
             )
             get_wishlist_info = read_data(query)
-            # TODO check if loc in favorite
+
             if not get_wishlist_info:
                 bot.send_message(call.message.chat.id, "\U00002705 Location added to wishlist!")
                 # bot.answer_callback_query(call.id, show_alert=True, text="Location added to wishlist!")
@@ -94,6 +98,16 @@ def callback_query(call):
                     f"VALUES ({call.from_user.id}, '{parse_call_data[2]}')"
                 )
                 write_data(query)
+
+                query = (
+                    f"SELECT {Users.user_city} "
+                    f"FROM {Users.table_name} "
+                    f"WHERE {Users.user_id}={call.from_user.id} "
+                    f"AND {Users.user_city}='{parse_call_data[2]}'"
+                )
+                get_favorite_location = read_data(query)
+                if get_favorite_location:
+                    bot.send_message(call.message.chat.id, "\U00002705 This location used to be set as favorite too!!")
             else:
                 bot.send_message(call.message.chat.id, "\U00002757 Location is in your wishlist!")
                 markup = types.InlineKeyboardMarkup()
@@ -110,17 +124,14 @@ def callback_query(call):
 
         bot.delete_state(call.from_user.id, call.message.chat.id)
 
-    elif parse_call_data[0] == "Remove location":
-        print('call back')
+    elif parse_call_data[0] == "Remove":
         States.change_wishlist.wishlist[parse_call_data[1]] = False
         markup = types.InlineKeyboardMarkup()
         for loc, isSet in States.change_wishlist.wishlist.items():
             if isSet:
-                markup.add(types.InlineKeyboardButton(f"{loc}", callback_data=f"Remove location|{loc}"))
+                markup.add(types.InlineKeyboardButton(f"{loc}", callback_data=f"Remove|{loc}"))
         markup.row(inline_set_wishlist_btn())
         markup.row(inline_cancel_btn())
-
-        # msg = bot.send_message(call.message.chat.id, "Tap location name to remove from wishlist:", reply_markup=markup)
 
         bot.edit_message_reply_markup(
             call.message.chat.id,
@@ -133,4 +144,4 @@ def callback_query(call):
         call.message.chat.id,
         message_id=data.globals.users_dict[call.from_user.id]['message_id'],
         reply_markup="")
-    data.globals.users_dict[call.from_user.id]['message_id'] = msg.message_id
+    data.globals.users_dict[call.from_user.id]['message_id'] = 0

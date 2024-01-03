@@ -8,3 +8,6 @@ class States(StatesGroup):
     help = State()
     cancel = State()
     change_wishlist = State()
+    empty_wishlist = State()
+    wishlist = State()
+    set_location = State()

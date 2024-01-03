@@ -18,15 +18,23 @@ import requests
 
 
 @bot.message_handler(commands=["set"])
+@bot.message_handler(state=States.set_location)
 def set_city_prompt(message):
     user_id = message.from_user.id
     chat_id = message.chat.id
 
-    query = (f"SELECT {Users.user_id}, {Users.user_city} "
+    if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
+            and not bot.get_state(message.from_user.id, message.chat.id) == States.set_location):
+        bot.edit_message_reply_markup(
+            message.chat.id,
+            message_id=data.globals.users_dict[message.from_user.id]['message_id'],
+            reply_markup="")
+
+    query = (f"SELECT {Users.user_city} "
              f"FROM {Users.table_name} "
              f"WHERE {Users.user_id}={user_id}")
     get_user_info = read_data(query)
-    if not get_user_info or get_user_info[0][1] is None:
+    if not get_user_info:
         markup = types.InlineKeyboardMarkup()
         cancel = inline_cancel_btn()
         set_location = inline_set_location_prompt_btn()
@@ -43,8 +51,9 @@ def set_city_prompt(message):
         change_location = inline_change_location_prompt_btn()
         change_location_keyboard = markup.add(change_location, cancel)
         msg = bot.send_message(chat_id,
-                               f"Your favorite location name: {get_user_info[0][1]}",
+                               f"Your favorite location is: {get_user_info[0][0]}",
                                reply_markup=change_location_keyboard)
+        bot.set_state(message.from_user.id, States.set_location, message.chat.id)
     data.globals.users_dict[user_id]['message_id'] = msg.message_id
 
 
