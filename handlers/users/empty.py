@@ -41,7 +41,7 @@ def empty_wishlist(message):
         add_location = inline_add_location_prompt_btn()
         cancel = inline_cancel_btn()
         add_city_menu = markup.row(add_location, cancel)
-        msg = bot.send_message(message.chat.id, 'Your wishlist is empty!', reply_markup=add_city_menu)
+        msg = bot.send_message(message.chat.id, 'Your wishlist is empty now!', reply_markup=add_city_menu)
 
     data.globals.users_dict[message.from_user.id]['message_id'] = msg.message_id
     print("empty : ", bot.get_state(message.from_user.id, message.chat.id))

@@ -44,7 +44,11 @@ def start_command(message):
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)
     else:
-        # TODO delete message if available
+        if not data.globals.users_dict[message.from_user.id]['message_id'] == 0:
+            bot.edit_message_reply_markup(
+                message.chat.id,
+                message_id=data.globals.users_dict[message.from_user.id]['message_id'],
+                reply_markup="")
         bot.send_message(
             chat_id,
             f"Hello, {message.from_user.first_name}!\n" f"Welcome back!",
@@ -57,7 +61,7 @@ def start_command(message):
             set_city_keyboard = markup.add(set_city, cancel)
             msg = bot.send_message(
                 chat_id,
-                "You haven't /set your favorite city, yet!",
+                "You haven't /reset your favorite city, yet!",
                 reply_markup=set_city_keyboard,
             )
         else:

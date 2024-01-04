@@ -17,7 +17,7 @@ from data.config import API
 import requests
 
 
-@bot.message_handler(commands=["set"])
+@bot.message_handler(commands=["reset"])
 @bot.message_handler(state=States.set_location)
 def set_city_prompt(message):
     user_id = message.from_user.id
