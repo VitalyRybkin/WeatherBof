@@ -10,11 +10,10 @@ from keyboards.inline.inline_buttons import (
     inline_change_location_prompt_btn,
 )
 from loader import bot
+from midwares.api_conn_center import get_current_weather
 from midwares.db_conn_center import read_data
 from midwares.sql_lib import Users
 from states.bot_states import States
-from data.config import API
-import requests
 
 
 @bot.message_handler(commands=["set"])
@@ -72,9 +71,7 @@ def search_location(message):
     ]
     city_name = "%20".join(bot_answer_formatting)
 
-    response = requests.get(
-        f"http://api.weatherapi.com/v1/current.json?key={API}&q={city_name}&aqi=no"
-    )
+    response = get_current_weather(city_name)
 
     if "error" in response.json().keys() and response.json()["error"]["code"] == 1006:
         bot.send_message(chat_id, response.json()["error"]["message"])

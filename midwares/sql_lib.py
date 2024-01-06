@@ -13,4 +13,3 @@ class Favorites:
     table_name: str = 'favorites'
     favorites_user_id: str = 'favorites_user_id'
     user_favorite_city_name: str = 'user_favorite_city_name'
-
