@@ -17,7 +17,7 @@ from data.config import API
 import requests
 
 
-@bot.message_handler(commands=["reset"])
+@bot.message_handler(commands=["set"])
 @bot.message_handler(state=States.set_location)
 def set_city_prompt(message):
     user_id = message.from_user.id
@@ -41,7 +41,7 @@ def set_city_prompt(message):
         set_location_keyboard = markup.add(set_location, cancel)
         msg = bot.send_message(
             chat_id,
-            "You haven't set your favorite location, yet!",
+            "You haven't /set your favorite location, yet!",
             reply_markup=set_location_keyboard,
         )
         # data.globals.users_dict[user_id]['message_id'] = msg.message_id
