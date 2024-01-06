@@ -6,7 +6,7 @@ def set_menu_commands(bot):
         [
             # BotCommand(command="start", description="start weather forecasting"),
             BotCommand(command="my", description="your favorite location weather"),
-            BotCommand(command="one-touch", description="display weather using your default settings"),
+            BotCommand(command="onetouch", description="display weather using your default settings"),
             BotCommand(command="default", description="default settings for 'one-touch' display weather"),
             BotCommand(command="reset", description="set/reset your favorite location"),
             BotCommand(command="wishlist", description="wishlist output"),

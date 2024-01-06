@@ -11,3 +11,4 @@ class States(StatesGroup):
     empty_wishlist = State()
     wishlist = State()
     set_location = State()
+    my = State()

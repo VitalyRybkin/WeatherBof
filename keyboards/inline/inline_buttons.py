@@ -47,3 +47,11 @@ def inline_change_location_btn(to_where, location):
 
 def inline_empty_wishlist_btn():
     return types.InlineKeyboardButton(ButtonSigns.clear_wishlist, callback_data="Clear wishlist")
+
+
+def inline_current_weather_btn():
+    return types.InlineKeyboardButton(ButtonSigns.current, callback_data="Current")
+
+
+def inline_forecast_btn():
+    return types.InlineKeyboardButton(ButtonSigns.forecast, callback_data="Forecast")

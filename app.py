@@ -15,6 +15,7 @@ import data.globals
 
 bot.register_message_handler(handlers.default.call_backs)
 bot.register_message_handler(handlers.users.start)
+bot.register_message_handler(handlers.users.my)
 bot.register_message_handler(handlers.default.help)
 bot.register_message_handler(handlers.users.set_location)
 bot.register_message_handler(handlers.users.empty)

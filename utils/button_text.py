@@ -12,3 +12,5 @@ class ButtonSigns:
     change_favorite_location: str = "\U00002705 Change"
     clear_wishlist: str = "\U0001F5D1 Clear"
     set_wishlist: str = "\U00002705 Set wishlist"
+    current: str = "\U0001F4C5 Current"
+    forecast: str = "\U0001F4C8 Forecast"
