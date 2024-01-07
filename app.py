@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
 
     def handler(signum, frame):
-        with open('settings.pkl', 'wb') as file:
+        with open('./data/settings.pkl', 'wb') as file:
             print("Signal Number:", signum, " Frame: ", frame)
             pickle.dump(data.globals.users_dict, file)
 
@@ -43,12 +43,12 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, handler)
     signal.signal(signal.SIGINT, handler)
 
-    if os.path.exists('settings.pkl'):
+    if os.path.exists('./data/settings.pkl'):
         with open('settings.pkl', 'rb') as f:
             data.globals.users_dict = pickle.load(f)
 
-    if not os.path.exists(f'./{DATABASE}'):
-        with sqlite3.connect(f'{DATABASE}') as connection:
+    if not os.path.exists(f'./data/{DATABASE}'):
+        with sqlite3.connect(f'./data/{DATABASE}') as connection:
             cursor = connection.cursor()
             cursor.execute("""PRAGMA foreign_keys = ON""")
             key = cursor.execute("PRAGMA foreign_keys")
