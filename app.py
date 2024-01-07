@@ -50,34 +50,8 @@ if __name__ == "__main__":
     if not os.path.exists(f'./data/{DATABASE}'):
         with sqlite3.connect(f'./data/{DATABASE}') as connection:
             cursor = connection.cursor()
-            cursor.execute("""PRAGMA foreign_keys = ON""")
-            key = cursor.execute("PRAGMA foreign_keys")
+            cursor.executescript(open("./data/schema.sql", "r").read())
             connection.commit()
-
-            cursor = connection.cursor()
-            cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                                   user_id INTEGER PRIMARY KEY NOT NULL,
-                                   user_city VARCHAR(50))''')
-            connection.commit()
-
-            cursor = connection.cursor()
-            cursor.execute('''CREATE TABLE IF NOT EXISTS favorites (
-                                  id INTEGER PRIMARY KEY,
-                                  favorites_user_id INTEGER NOT NULL,
-                                  user_favorite_city_name VARCHAR(50) NOT NULL,
-                                  FOREIGN KEY (favorites_user_id) REFERENCES users(user_id) 
-                                  ON DELETE CASCADE
-                                  ON UPDATE CASCADE)''')
-            connection.commit()
-
-            cursor = connection.cursor()
-            cursor.execute('CREATE INDEX IF NOT EXISTS favorites_id_index ON favorites(id)')
-            connection.commit()
-
-            cursor = connection.cursor()
-            cursor.execute('CREATE INDEX IF NOT EXISTS users_user_id_index ON users (user_id)')
-            connection.commit()
-
             cursor.close()
 
     bot.add_custom_filter(custom_filters.StateFilter(bot))
