@@ -39,7 +39,8 @@ def prompt(call):
 @bot.callback_query_handler(func=lambda call: call.data == "Clear wishlist")
 def clear_wishlist(call):
     query = (f"DELETE FROM {Favorites.table_name} "
-             f"WHERE {Favorites.favorites_user_id}={call.from_user.id}")
+             f"WHERE {Favorites.favorites_user_id}="
+             f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})")
     write_data(query)
     bot.edit_message_reply_markup(
         call.message.chat.id,
@@ -55,8 +56,11 @@ def clear_wishlist(call):
 def change_wishlist(call):
     for loc, isSet in States.change_wishlist.wishlist.items():
         if not isSet:
+            # TODO wrong query - add user
             query = (f"DELETE FROM {Favorites.table_name} "
-                     f"WHERE {Favorites.user_favorite_city_name}='{loc}'")
+                     f"WHERE {Favorites.user_favorite_city_name}='{loc}' "
+                     f"AND {Favorites.favorites_user_id}="
+                     f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})")
             write_data(query)
     bot.delete_state(call.from_user.id, call.message.chat.id)
     bot.edit_message_reply_markup(
@@ -101,7 +105,8 @@ def callback_query(call):
         query = (
             f"SELECT {Favorites.user_favorite_city_name} "
             f"FROM {Favorites.table_name} "
-            f"WHERE {Favorites.favorites_user_id}={call.from_user.id} "
+            f"WHERE {Favorites.favorites_user_id}="
+            f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
             f"AND {Favorites.user_favorite_city_name}='{parse_call_data[2]}'"
         )
         get_wishlist_info = read_data(query)
@@ -112,7 +117,8 @@ def callback_query(call):
             query = (
                 f"INSERT INTO {Favorites.table_name} "
                 f"({Favorites.favorites_user_id}, {Favorites.user_favorite_city_name}) "
-                f"VALUES ({call.from_user.id}, '{parse_call_data[2]}')"
+                f"VALUES ((SELECT {Users.id} FROM {Users.table_name} "
+                f"WHERE {Users.user_id}={call.from_user.id}), '{parse_call_data[2]}')"
             )
             write_data(query)
 
