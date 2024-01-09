@@ -33,7 +33,7 @@ def set_city_prompt(message):
              f"FROM {Users.table_name} "
              f"WHERE {Users.user_id}={user_id}")
     get_user_info = read_data(query)
-    if not get_user_info:
+    if get_user_info[0][0] is None:
         markup = types.InlineKeyboardMarkup()
         cancel = inline_cancel_btn()
         set_location = inline_set_location_prompt_btn()
@@ -52,7 +52,7 @@ def set_city_prompt(message):
         msg = bot.send_message(chat_id,
                                f"Your favorite location is: {get_user_info[0][0]}",
                                reply_markup=change_location_keyboard)
-        bot.set_state(message.from_user.id, States.set_location, message.chat.id)
+    bot.set_state(message.from_user.id, States.set_location, message.chat.id)
     data.globals.users_dict[user_id]['message_id'] = msg.message_id
 
 

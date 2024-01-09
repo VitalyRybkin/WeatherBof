@@ -1,7 +1,6 @@
 from random import choice
 
-from handlers.default import help
-from handlers.users import set_location
+from handlers.users import set_location, help
 from loader import bot
 from utils.reply_center import Reply
 import data.globals as global_var

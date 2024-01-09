@@ -7,7 +7,7 @@ from keyboards.inline.inline_buttons import (
 )
 from loader import bot
 from midwares.db_conn_center import read_data, write_data
-from midwares.sql_lib import Users
+from midwares.sql_lib import Users, Current, Daily, Hourly
 from states.bot_states import States
 from utils.reply_center import Reply
 import data.globals
@@ -15,6 +15,11 @@ import data.globals
 
 @bot.message_handler(commands=["start"])
 def start_command(message):
+    """
+    Function. Bot start workout. Check if user is new or old user back. Executes 'start' command. Writes settings in db.
+    :param message:
+    :return:
+    """
     user_id = message.from_user.id
     chat_id = message.chat.id
 
@@ -25,6 +30,12 @@ def start_command(message):
         write_data(
             f'INSERT INTO {Users.table_name} ("{Users.user_id}") VALUES ({user_id})'
         )
+        write_data(f'INSERT INTO {Current.table_name} ("{Current.current_weather_user_id}") '
+                   f'VALUES ((SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={user_id}))')
+        write_data(f'INSERT INTO {Daily.table_name} ("{Daily.daily_weather_user_id}") '
+                   f'VALUES ((SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={user_id}))')
+        write_data(f'INSERT INTO {Hourly.table_name} ("{Hourly.hourly_weather_user_id}") '
+                   f'VALUES ((SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={user_id}))')
         bot.send_message(
             chat_id,
             f"Hello, {message.from_user.first_name}!\n"

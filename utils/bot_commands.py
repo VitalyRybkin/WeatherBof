@@ -13,7 +13,8 @@ def set_menu_commands(bot):
             BotCommand(command="change", description="change your wishlist"),
             BotCommand(command="add", description="add location to a wishlist"),
             BotCommand(command="empty", description="clear your wishlist"),
-            BotCommand(command="customization", description="your settings"),
+            BotCommand(command="customize", description="change your settings"),
+            BotCommand(command="watch_custom", description="check your settings"),
             BotCommand(command="help", description="start helping me"),
         ]
     )

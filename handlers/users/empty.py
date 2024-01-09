@@ -10,7 +10,12 @@ from states.bot_states import States
 
 @bot.message_handler(commands=["empty"])
 @bot.message_handler(state=States.empty_wishlist)
-def empty_wishlist(message):
+def empty_wishlist(message) -> None:
+    """
+    Function. Executes empty command. Clear wishlist prompt. Setting empty_wishlist state.
+    :param message:
+    :return:
+    """
     print("empty : ", bot.get_state(message.from_user.id, message.chat.id))
     if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
             and not bot.get_state(message.from_user.id, message.chat.id) == States.empty_wishlist):

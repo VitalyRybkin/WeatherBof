@@ -9,7 +9,12 @@ import data.globals
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "Cancel")
-def cancel(call):
+def cancel(call) -> None:
+    """
+    Function. Cancelling current bot state.
+    :param call:
+    :return:
+    """
     bot.delete_state(call.from_user.id, call.message.chat.id)
     bot.send_message(call.message.chat.id, "\U0000274C Canceled!")
     bot.edit_message_reply_markup(
@@ -21,7 +26,12 @@ def cancel(call):
 
 @bot.callback_query_handler(
     func=lambda call: call.data == "Set prompt" or call.data == "Add prompt" or call.data == "Change prompt")
-def prompt(call):
+def prompt(call) -> None:
+    """
+    Function. 'Type in location name' - message output.
+    :param call:
+    :return:
+    """
     bot.set_state(call.from_user.id, States.search_location, call.message.chat.id)
     States.search_location.operation = call.data
     markup = types.InlineKeyboardMarkup()
@@ -37,7 +47,12 @@ def prompt(call):
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "Clear wishlist")
-def clear_wishlist(call):
+def clear_wishlist(call) -> None:
+    """
+    Function. Clearing wishlist.
+    :param call:
+    :return:
+    """
     query = (f"DELETE FROM {Favorites.table_name} "
              f"WHERE {Favorites.favorites_user_id}="
              f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})")
@@ -53,10 +68,14 @@ def clear_wishlist(call):
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "Change wishlist")
-def change_wishlist(call):
+def change_wishlist(call) -> None:
+    """
+    Function. Changing wishlist content.
+    :param call:
+    :return:
+    """
     for loc, isSet in States.change_wishlist.wishlist.items():
         if not isSet:
-            # TODO wrong query - add user
             query = (f"DELETE FROM {Favorites.table_name} "
                      f"WHERE {Favorites.user_favorite_city_name}='{loc}' "
                      f"AND {Favorites.favorites_user_id}="
@@ -72,7 +91,12 @@ def change_wishlist(call):
 
 
 @bot.callback_query_handler(func=lambda call: "Remove" in call.data)
-def remove_from_wishlist(call):
+def remove_from_wishlist(call) -> None:
+    """
+    Function. Removing item from wishlist (created class dict) while in change_wishlist state.
+    :param call:
+    :return:
+    """
     parse_call_data = call.data.split("|")
     States.change_wishlist.wishlist[parse_call_data[1]] = False
     markup = types.InlineKeyboardMarkup()
@@ -88,9 +112,13 @@ def remove_from_wishlist(call):
         reply_markup=markup)
 
 
-# @bot.callback_query_handler(func=lambda call: True)
 @bot.callback_query_handler(func=lambda call: "Add" in call.data)
-def callback_query(call):
+def callback_query(call) -> None:
+    """
+    Function. Adding location to a wishlist or set as favorite.
+    :param call:
+    :return:
+    """
     parse_call_data = call.data.split("|")
 
     if parse_call_data[1] == "favorite":
@@ -130,7 +158,7 @@ def callback_query(call):
             )
             get_favorite_location = read_data(query)
             if get_favorite_location:
-                bot.send_message(call.message.chat.id, "\U00002705 This location used to be set as favorite too!!")
+                bot.send_message(call.message.chat.id, "\U00002705 This location used to be set as favorite too!")
         else:
             bot.send_message(call.message.chat.id, "\U00002757 Location is in your wishlist!")
             markup = types.InlineKeyboardMarkup()

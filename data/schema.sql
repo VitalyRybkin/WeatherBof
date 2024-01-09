@@ -3,7 +3,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER,
     user_id INTEGER NOT NULL,
-    user_city VARCHAR(50),
+    user_city VARCHAR(50) DEFAULT NULL,
     metric INTEGER CHECK (metric=0 OR metric=1) DEFAULT 0,
     PRIMARY KEY (id)
 );
@@ -56,8 +56,19 @@ CREATE TABLE IF NOT EXISTS hourly_weather (
     ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS default_weather (
+    id INTEGER,
+    default_user_id INTEGER NOT NULL UNIQUE,
+    current_weather INTEGER CHECK (current_weather=0 OR current_weather=1) DEFAULT 1,
+    daily_weather INTEGER CHECK (daily_weather IN (1, 2, 3) ) DEFAULT 3,
+    hourly_weather INTEGER CHECK (hourly_weather BETWEEN 1 AND 12) DEFAULT 6,
+    PRIMARY KEY (id)
+    FOREIGN KEY (default_user_id) REFERENCES users(id)
+);
+
 CREATE INDEX IF NOT EXISTS favorites_id_index ON favorites(id);
 CREATE INDEX IF NOT EXISTS hourly_id_index ON hourly_weather(id);
 CREATE INDEX IF NOT EXISTS daily_id_index ON daily_weather(id);
 CREATE INDEX IF NOT EXISTS current_id_index ON current_weather(id);
 CREATE INDEX IF NOT EXISTS users_user_id_index ON users (id);
+CREATE INDEX IF NOT EXISTS default_user_id_index ON default_weather (id);

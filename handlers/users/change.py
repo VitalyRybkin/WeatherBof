@@ -11,7 +11,12 @@ from states.bot_states import States
 
 @bot.message_handler(commands=["change"])
 @bot.message_handler(state=States.change_wishlist)
-def get_wishlist(message):
+def get_wishlist(message) -> None:
+    """
+    Function. Executes change command. Change wishlist prompt. Setting change_wishlist state.
+    :param message:
+    :return:
+    """
     print("change : ", bot.get_state(message.from_user.id, message.chat.id))
     if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
             and not bot.get_state(message.from_user.id, message.chat.id) == States.change_wishlist):

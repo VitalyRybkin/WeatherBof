@@ -8,7 +8,12 @@ from states.bot_states import States
 
 @bot.message_handler(commands=["add"])
 @bot.message_handler(state=States.add_location)
-def add_wishlist_location(message):
+def add_wishlist_location(message) -> None:
+    """
+    Function. Executes add command. Add location to wishlist prompt. Setting add_location state.
+    :param message:
+    :return:
+    """
     print("add : ", bot.get_state(message.from_user.id, message.chat.id))
     if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
             and not bot.get_state(message.from_user.id, message.chat.id) == States.add_location):

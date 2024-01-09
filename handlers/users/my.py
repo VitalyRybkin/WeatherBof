@@ -10,7 +10,12 @@ from states.bot_states import States
 
 @bot.message_handler(commands=['my'])
 @bot.message_handler(state=States.my)
-def my(message):
+def my(message) -> None:
+    """
+    Function. Executes 'my' command. Display weather user's favorite location.
+    :param message:
+    :return:
+    """
     if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0 and
             not bot.get_state(message.from_user.id, message.chat.id) == States.my):
         bot.edit_message_reply_markup(message.chat.id,
