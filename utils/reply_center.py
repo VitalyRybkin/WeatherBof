@@ -58,6 +58,7 @@ class Reply:
             "/add": "add a new place to a wishlist and enjoy forecasting.",
             "/empty": "move everything out of wishlist.",
             "/prefs": "preferences for your weather display.",
+            "/userconfig": "set units, menu and more",
             # "/remove": "Remove favorite location from your wishlist, but not out of your memory!",
             "/help": "help is coming right away!",
         }
