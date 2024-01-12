@@ -7,6 +7,6 @@ from . import change
 from . import my
 from . import help
 from . import call_backs
-from . import commands_workout
 from . import watch_custom
-from . import custom
+from . import preferences
+from . import commands_workout

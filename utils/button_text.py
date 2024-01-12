@@ -14,3 +14,8 @@ class ButtonSigns:
     set_wishlist: str = "\U00002705 Set wishlist"
     current: str = "\U0001F4C5 Current"
     forecast: str = "\U0001F4C8 Forecast"
+    current_weather: str = "\U0001F4C4 Current"
+    hourly_weather: str = "\U000023F3 Hourly"
+    daily_weather: str = "\U0001F4C6 Daily"
+    save_settings: str = "\U00002705 Save"
+    exit: str = "\U00002B05 Exit"

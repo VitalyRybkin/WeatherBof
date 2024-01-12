@@ -4,14 +4,13 @@ import data.globals
 from keyboards.inline.inline_buttons import inline_cancel_btn, inline_add_location_prompt_btn
 from loader import bot
 from midwares.db_conn_center import read_data
-from midwares.sql_lib import Favorites, Users
+from midwares.sql_lib import Favorite, User
 from states.bot_states import States
 
 
 @bot.message_handler(commands=["wishlist"])
 @bot.message_handler(state=States.wishlist)
 def wishlist_command(message):
-    print("wishlist : ", bot.get_state(message.from_user.id, message.chat.id))
     if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
             and not bot.get_state(message.from_user.id, message.chat.id) == States.wishlist):
         bot.edit_message_reply_markup(
@@ -19,11 +18,11 @@ def wishlist_command(message):
             message_id=data.globals.users_dict[message.from_user.id]['message_id'],
             reply_markup="")
 
-    query = (f'SELECT {Favorites.user_favorite_city_name} '
-             f'FROM {Favorites.table_name} '
-             f'WHERE {Favorites.favorites_user_id}='
-             f'(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={message.from_user.id})'
-             f'ORDER BY {Favorites.user_favorite_city_name}')
+    query = (f'SELECT {Favorite.user_favorite_city_name} '
+             f'FROM {Favorite.table_name} '
+             f'WHERE {Favorite.favorite_user_id}='
+             f'({User.get_user_id(message.from_user.id)})'
+             f'ORDER BY {Favorite.user_favorite_city_name}')
     get_wishlist = read_data(query)
 
     if get_wishlist:
@@ -41,4 +40,3 @@ def wishlist_command(message):
         msg = bot.send_message(message.chat.id, 'Your wishlist is empty!', reply_markup=add_city_menu)
 
     data.globals.users_dict[message.from_user.id]['message_id'] = msg.message_id
-    print("wishlist : ", bot.get_state(message.from_user.id, message.chat.id))

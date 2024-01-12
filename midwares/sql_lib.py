@@ -1,20 +1,23 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
-class Users:
-    from_user_id: int = field(init=True)
-    table_name: str = 'users'
-    id: str = 'id'
+class User:
+    table_name: str = 'bot_user'
     user_id: str = 'user_id'
+    bot_user: str = 'bot_user'
     user_city: str = 'user_city'
     metric: str = 'metric'
 
+    @classmethod
+    def get_user_id(cls, *args) -> str:
+        return f"SELECT {cls.bot_user} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
+
 
 @dataclass(frozen=True)
-class Favorites:
-    table_name: str = 'favorites'
-    favorites_user_id: str = 'favorites_user_id'
+class Favorite:
+    table_name: str = 'favorite_city'
+    favorite_user_id: str = 'favorite_user_id'
     user_favorite_city_name: str = 'user_favorite_city_name'
 
 
@@ -45,4 +48,3 @@ class Daily:
     astro: str = 'astro'
     visibility: str = 'visibility'
     humidity: str = 'humidity'
-

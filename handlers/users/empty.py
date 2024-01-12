@@ -4,7 +4,7 @@ import data
 from keyboards.inline.inline_buttons import inline_add_location_prompt_btn, inline_cancel_btn, inline_empty_wishlist_btn
 from loader import bot
 from midwares.db_conn_center import read_data
-from midwares.sql_lib import Favorites, Users
+from midwares.sql_lib import Favorite, User
 from states.bot_states import States
 
 
@@ -24,11 +24,11 @@ def empty_wishlist(message) -> None:
             message_id=data.globals.users_dict[message.from_user.id]['message_id'],
             reply_markup="")
 
-    query = (f"SELECT {Favorites.user_favorite_city_name} "
-             f"FROM {Favorites.table_name} "
-             f"WHERE {Favorites.favorites_user_id}="
-             f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={message.from_user.id})"
-             f"ORDER BY {Favorites.user_favorite_city_name}")
+    query = (f"SELECT {Favorite.user_favorite_city_name} "
+             f"FROM {Favorite.table_name} "
+             f"WHERE {Favorite.favorite_user_id}="
+             f"({User.get_user_id(message.from_user.id)})"
+             f"ORDER BY {Favorite.user_favorite_city_name}")
     get_wishlist = read_data(query)
 
     if get_wishlist:

@@ -1,9 +1,12 @@
 import atexit
-import pickle
+import copy
+import json
+# import pickle
 import signal
 import sqlite3
 
 from telebot import custom_filters
+
 
 from loader import bot
 import handlers
@@ -20,8 +23,7 @@ bot.register_message_handler(handlers.users.set_location)
 bot.register_message_handler(handlers.users.empty)
 bot.register_message_handler(handlers.users.add_location)
 bot.register_message_handler(handlers.users.change)
-bot.register_message_handler(handlers.users.watch_custom)
-bot.register_message_handler(handlers.users.custom)
+bot.register_message_handler(handlers.users.preferences)
 bot.register_message_handler(handlers.users.wishlist)
 bot.register_message_handler(handlers.users.call_backs)
 bot.register_message_handler(handlers.users.commands_workout)
@@ -36,18 +38,27 @@ if __name__ == "__main__":
 
 
     def handler(signum, frame):
-        with open('./data/settings.pkl', 'wb') as file:
+        # with open('./data/settings.pkl', 'wb') as file:
+        #     print("Signal Number:", signum, " Frame: ", frame)
+        #     pickle.dump(data.globals.users_dict, file)
+        with open("./data/user_dict.json", "w") as write_dict:
+            json.dump(data.globals.users_dict, write_dict, indent=4)
             print("Signal Number:", signum, " Frame: ", frame)
-            pickle.dump(data.globals.users_dict, file)
 
 
     atexit.register(handler)
     signal.signal(signal.SIGTERM, handler)
     signal.signal(signal.SIGINT, handler)
 
-    if os.path.exists('./data/settings.pkl'):
-        with open('settings.pkl', 'rb') as f:
-            data.globals.users_dict = pickle.load(f)
+    if os.path.exists('./data/user_dict.json'):
+        # with open('settings.pkl', 'rb') as f:
+        #     data.globals.users_dict = pickle.load(f)
+        with open("./data/user_dict.json", "r") as read_dict:
+            json_dict = json.load(read_dict)
+        new_dict = {}
+        for k, v in json_dict.items():
+            new_dict[int(k)] = v
+        data.globals.users_dict = copy.deepcopy(new_dict)
 
     if not os.path.exists(f'./data/{DATABASE}'):
         with sqlite3.connect(f'./data/{DATABASE}') as connection:

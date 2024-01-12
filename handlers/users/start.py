@@ -1,3 +1,5 @@
+
+
 from telebot import types
 
 from keyboards.inline.inline_buttons import (
@@ -7,7 +9,7 @@ from keyboards.inline.inline_buttons import (
 )
 from loader import bot
 from midwares.db_conn_center import read_data, write_data
-from midwares.sql_lib import Users, Current, Daily, Hourly
+from midwares.sql_lib import User, Current, Daily, Hourly
 from states.bot_states import States
 from utils.reply_center import Reply
 import data.globals
@@ -23,19 +25,20 @@ def start_command(message):
     user_id = message.from_user.id
     chat_id = message.chat.id
 
-    query = f"SELECT {Users.user_id}, {Users.user_city} FROM {Users.table_name} WHERE {Users.user_id}={user_id}"
+    query = f"SELECT {User.bot_user}, {User.user_city} FROM {User.table_name} WHERE {User.bot_user}={user_id}"
     get_user_info = read_data(query)
+    print(get_user_info)
 
     if not get_user_info:
         write_data(
-            f'INSERT INTO {Users.table_name} ("{Users.user_id}") VALUES ({user_id})'
+            f'INSERT INTO {User.table_name} ("{User.bot_user}") VALUES ({user_id})'
         )
         write_data(f'INSERT INTO {Current.table_name} ("{Current.current_weather_user_id}") '
-                   f'VALUES ((SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={user_id}))')
+                   f'VALUES (({User.get_user_id(user_id)}))')
         write_data(f'INSERT INTO {Daily.table_name} ("{Daily.daily_weather_user_id}") '
-                   f'VALUES ((SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={user_id}))')
+                   f'VALUES (({User.get_user_id(user_id)}))')
         write_data(f'INSERT INTO {Hourly.table_name} ("{Hourly.hourly_weather_user_id}") '
-                   f'VALUES ((SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={user_id}))')
+                   f'VALUES (({User.get_user_id(user_id)}))')
         bot.send_message(
             chat_id,
             f"Hello, {message.from_user.first_name}!\n"
@@ -51,6 +54,14 @@ def start_command(message):
         if user_id not in data.globals.users_dict:
             data.globals.users_dict.setdefault(user_id, dict())
             data.globals.users_dict[user_id]['count_not_defined'] = 0
+            data.globals.users_dict[user_id]['message_id'] = 0
+            data.globals.users_dict[user_id]['user_id'] = user_id
+            data.globals.users_dict[user_id]['chat_id'] = chat_id
+            data.globals.users_dict[user_id]['state'] = None
+            # TODO setting state in users dict
+            # TODO set state from users dict if bot was restarted
+            # TODO delete/edit messages
+            # TODO change units command
 
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)
