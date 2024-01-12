@@ -9,4 +9,5 @@ from . import help
 from . import call_backs
 from . import watch_custom
 from . import preferences
+from . import user_config
 from . import commands_workout

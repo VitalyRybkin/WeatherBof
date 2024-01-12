@@ -8,6 +8,7 @@ class User:
     bot_user: str = 'bot_user'
     user_city: str = 'user_city'
     metric: str = 'metric'
+    reply_menu: str = 'reply_menu'
 
     @classmethod
     def get_user_id(cls, *args) -> str:

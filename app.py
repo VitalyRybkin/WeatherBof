@@ -26,6 +26,7 @@ bot.register_message_handler(handlers.users.change)
 bot.register_message_handler(handlers.users.preferences)
 bot.register_message_handler(handlers.users.wishlist)
 bot.register_message_handler(handlers.users.call_backs)
+bot.register_message_handler(handlers.users.user_config)
 bot.register_message_handler(handlers.users.commands_workout)
 
 
