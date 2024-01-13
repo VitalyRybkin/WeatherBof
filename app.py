@@ -25,12 +25,12 @@ bot.register_message_handler(handlers.users.add_location)
 bot.register_message_handler(handlers.users.change)
 bot.register_message_handler(handlers.users.preferences)
 bot.register_message_handler(handlers.users.wishlist)
-# bot.register_message_handler(handlers.call_backs.call_backs)
+bot.register_message_handler(handlers.users.user_config)
+bot.register_message_handler(handlers.call_backs.user_config_callback)
 bot.register_message_handler(handlers.call_backs.default_callback)
 bot.register_message_handler(handlers.call_backs.add_location_callback)
 bot.register_message_handler(handlers.call_backs.wishlist_callback)
 bot.register_message_handler(handlers.call_backs.settings_callback)
-bot.register_message_handler(handlers.users.user_config)
 bot.register_message_handler(handlers.users.commands_workout)
 
 
@@ -63,6 +63,11 @@ if __name__ == "__main__":
         new_dict = {}
         for k, v in json_dict.items():
             new_dict[int(k)] = v
+            if v['state'] is None and not v['message_id'] == 0:
+                print(v['chat_id'], v['message_id'])
+                bot.delete_message(v['chat_id'], v['message_id'])
+                v['message_id'] = 0
+            bot.set_state(v['user_id'], v['state'], v['chat_id'])
         data.globals.users_dict = copy.deepcopy(new_dict)
 
     if not os.path.exists(f'./data/{DATABASE}'):

@@ -49,3 +49,11 @@ class Daily:
     astro: str = 'astro'
     visibility: str = 'visibility'
     humidity: str = 'humidity'
+
+
+@dataclass(frozen=True)
+class Default:
+    table_name: str = 'default_weather'
+    default_user_id: str = 'default_user_id'
+    current_weather: str = 'current_weather'
+    hourly_weather: str = 'hourly_weather'

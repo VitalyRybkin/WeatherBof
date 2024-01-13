@@ -139,27 +139,39 @@ def switch_setting(call):
 @bot.callback_query_handler(func=lambda call: "Save" in call.data)
 def save_settings(call):
     parse_call_data = call.data.split("|")
-    table_name = fields = ''
+    table_name = fields = condition = ''
+    print(States.user_config_setting.settings_dict)
     match parse_call_data[1]:
         case Current.table_name:
             table_name = Current.table_name
+            condition = Current.table_name + '_user_id'
             for k, v in States.customize_current.settings_dict[0].items():
                 fields += k + f'={v}, '
         case Hourly.table_name:
             table_name = Hourly.table_name
+            condition = Hourly.table_name + '_user_id'
             for k, v in States.customize_hourly.settings_dict[0].items():
                 fields += k + f'={v}, '
         case Daily.table_name:
             table_name = Daily.table_name
+            condition = Daily.table_name + '_user_id'
             for k, v in States.customize_daily.settings_dict[0].items():
+                fields += k + f'={v}, '
+        case User.table_name:
+            table_name = User.table_name
+            condition = User.table_name
+            for k, v in States.user_config_setting.settings_dict.items():
+                v = v if isinstance(v, int) else f"'{v}'"
                 fields += k + f'={v}, '
 
     fields = fields[:-2]
     query = (
         f"UPDATE {table_name} "
         f"SET {fields} "
-        f"WHERE {table_name + '_user_id'}="
+        f"WHERE {condition}="
         # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
         f"({User.get_user_id(call.from_user.id)})"
     )
+
+    print(query)
     write_data(query)

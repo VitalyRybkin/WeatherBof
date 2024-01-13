@@ -10,6 +10,7 @@ def cancel(call) -> None:
     :return:
     """
     bot.delete_state(call.from_user.id, call.message.chat.id)
+
     if call.data == "Cancel":
         bot.send_message(call.message.chat.id, "\U0000274C Canceled!")
     elif call.data == "Exit":
@@ -20,4 +21,6 @@ def cancel(call) -> None:
         message_id=data.globals.users_dict[call.from_user.id]["message_id"],
         reply_markup="",
     )
+    
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
+    data.globals.users_dict[call.from_user.id]['state'] = bot.get_state(call.from_user.id, call.message.chat.id)

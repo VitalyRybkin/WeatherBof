@@ -17,4 +17,6 @@ class States(StatesGroup):
     customize_hourly = State()
     customize_daily = State()
     change_setting = State()
-    user_config = State()
+    user_config_setting = State()
+    config_settings = State()
+
