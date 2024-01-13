@@ -59,9 +59,7 @@ def start_command(message):
             data.globals.users_dict[user_id]['chat_id'] = chat_id
             data.globals.users_dict[user_id]['state'] = None
             # TODO setting state in users dict
-            # TODO set state from users dict if bot was restarted
             # TODO delete/edit messages
-            # TODO change units command
 
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)

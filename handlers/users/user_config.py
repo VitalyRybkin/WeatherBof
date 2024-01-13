@@ -3,7 +3,7 @@ import copy
 from telebot import types
 
 import data
-from keyboards.inline.inline_buttons import inline_cancel_btn, inline_save_settings_btn, inline_exit_btn
+from keyboards.inline.inline_buttons import inline_save_settings_btn, inline_exit_btn
 from loader import bot
 from midwares.db_conn_center import read_data_row
 from midwares.sql_lib import User
