@@ -49,7 +49,7 @@ def callback_query(call) -> None:
         query = (
             f"UPDATE {User.table_name} "
             f"SET {User.user_city}='{parse_call_data[2]}' "
-            f"WHERE {User.user_id}={call.from_user.id}"
+            f"WHERE {User.bot_user}={call.from_user.id}"
         )
         write_data(query)
     elif parse_call_data[1] == "wishlist":

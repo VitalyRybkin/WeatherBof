@@ -1,8 +1,8 @@
 from telebot import types
 
 import data
-from keyboards.inline.inline_buttons import inline_current_weather_btn, inline_daily_weather_btn, \
-    inline_cancel_btn, inline_hourly_weather_btn, inline_change_settings_btn, inline_save_settings_btn, inline_exit_btn
+from keyboards.inline.inline_buttons import inline_current_settings_btn, inline_daily_settings_btn, \
+    inline_cancel_btn, inline_hourly_settings_btn, inline_change_settings_btn, inline_save_settings_btn, inline_exit_btn
 from loader import bot
 from midwares.sql_lib import Current, Hourly, Daily
 from states.bot_states import States
@@ -21,7 +21,7 @@ def preferences(message):
     bot.set_state(message.from_user.id, States.customize_prompt, message.chat.id)
 
     markup = types.InlineKeyboardMarkup()
-    markup.add(inline_current_weather_btn(), inline_hourly_weather_btn(), inline_daily_weather_btn())
+    markup.add(inline_current_settings_btn(), inline_hourly_settings_btn(), inline_daily_settings_btn())
     markup.add(inline_cancel_btn())
 
     msg = bot.send_message(message.chat.id, "Customize your weather display:", reply_markup=markup)

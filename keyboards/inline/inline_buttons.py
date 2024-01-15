@@ -1,4 +1,6 @@
 from telebot import types
+
+from midwares.sql_lib import Current, Hourly, Daily
 from utils.button_text import ButtonSigns
 
 
@@ -53,23 +55,27 @@ def inline_empty_wishlist_btn():
     return types.InlineKeyboardButton(ButtonSigns.clear_wishlist, callback_data="Clear wishlist")
 
 
-# def inline_current_weather_btn():
-#     return types.InlineKeyboardButton(ButtonSigns.current, callback_data="Current")
-#
-#
-def inline_forecast_btn():
-    return types.InlineKeyboardButton(ButtonSigns.forecast, callback_data="Forecast")
-
-
 def inline_current_weather_btn():
+    return types.InlineKeyboardButton(ButtonSigns.current, callback_data=Current.table_name)
+
+
+def inline_hourly_weather_btn(msg_text):
+    return types.InlineKeyboardButton(ButtonSigns.hourly_weather + msg_text, callback_data=Hourly.table_name)
+
+
+def inline_daily_weather_btn(msg_text):
+    return types.InlineKeyboardButton(ButtonSigns.daily_weather + msg_text, callback_data=Daily.table_name)
+
+
+def inline_current_settings_btn():
     return types.InlineKeyboardButton(ButtonSigns.current_weather, callback_data="Current settings")
 
 
-def inline_hourly_weather_btn():
+def inline_hourly_settings_btn():
     return types.InlineKeyboardButton(ButtonSigns.hourly_weather, callback_data="Hourly settings")
 
 
-def inline_daily_weather_btn():
+def inline_daily_settings_btn():
     return types.InlineKeyboardButton(ButtonSigns.daily_weather, callback_data="Daily settings")
 
 
