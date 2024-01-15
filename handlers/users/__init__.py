@@ -6,7 +6,7 @@ from . import empty
 from . import change
 from . import my
 from . import help
-from . import watch_custom
+from . import default_config
 from . import preferences
 from . import user_config
 from . import commands_workout

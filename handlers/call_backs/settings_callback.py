@@ -3,7 +3,7 @@ from handlers.users.preferences import customize_current_setting, customize_dail
     change_settings
 from loader import bot
 from midwares.db_conn_center import read_data_row, write_data
-from midwares.sql_lib import Current, User, Daily, Hourly
+from midwares.sql_lib import Current, User, Daily, Hourly, Default
 from states.bot_states import States
 
 
@@ -140,27 +140,35 @@ def switch_setting(call):
 def save_settings(call):
     parse_call_data = call.data.split("|")
     table_name = fields = condition = ''
-    print(States.user_config_setting.settings_dict)
     match parse_call_data[1]:
         case Current.table_name:
             table_name = Current.table_name
-            condition = Current.table_name + '_user_id'
+            # condition = Current.table_name + '_user_id'
+            condition = Current.current_weather_user_id
             for k, v in States.customize_current.settings_dict[0].items():
                 fields += k + f'={v}, '
         case Hourly.table_name:
             table_name = Hourly.table_name
-            condition = Hourly.table_name + '_user_id'
+            # condition = Hourly.table_name + '_user_id'
+            condition = Hourly.hourly_weather_user_id
             for k, v in States.customize_hourly.settings_dict[0].items():
                 fields += k + f'={v}, '
         case Daily.table_name:
             table_name = Daily.table_name
-            condition = Daily.table_name + '_user_id'
+            # condition = Daily.table_name + '_user_id'
+            condition = Daily.daily_weather_user_id
             for k, v in States.customize_daily.settings_dict[0].items():
                 fields += k + f'={v}, '
         case User.table_name:
             table_name = User.table_name
-            condition = User.table_name
+            condition = User.bot_user
             for k, v in States.user_config_setting.settings_dict.items():
+                v = v if isinstance(v, int) else f"'{v}'"
+                fields += k + f'={v}, '
+        case Default.table_name:
+            table_name = Default.table_name
+            condition = Default.default_user_id
+            for k, v in States.default_setting.settings_dict.items():
                 v = v if isinstance(v, int) else f"'{v}'"
                 fields += k + f'={v}, '
 
@@ -173,5 +181,6 @@ def save_settings(call):
         f"({User.get_user_id(call.from_user.id)})"
     )
 
-    print(query)
     write_data(query)
+
+    bot.send_message(call.message.chat.id, "\U00002705 Saved!")

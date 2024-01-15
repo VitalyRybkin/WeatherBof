@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class User:
     table_name: str = 'bot_user'
     user_id: str = 'user_id'
@@ -13,6 +13,10 @@ class User:
     @classmethod
     def get_user_id(cls, *args) -> str:
         return f"SELECT {cls.bot_user} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
+
+    @classmethod
+    def get_user_config(cls, *args):
+        return f"SELECT {cls.metric}, {cls.reply_menu} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
 
 
 @dataclass(frozen=True)
@@ -57,3 +61,10 @@ class Default:
     default_user_id: str = 'default_user_id'
     current_weather: str = 'current_weather'
     hourly_weather: str = 'hourly_weather'
+    daily_weather: str = 'daily_weather'
+
+    @classmethod
+    def get_default_settings(cls, *args):
+        return (f"SELECT {cls.current_weather}, {cls.hourly_weather}, {cls.daily_weather} "
+                f"FROM {cls.table_name} "
+                f"WHERE {cls.default_user_id}={args[0]}")

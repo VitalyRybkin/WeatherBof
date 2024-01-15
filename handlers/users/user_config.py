@@ -27,15 +27,14 @@ def user_config(message):
     bot.set_state(message.from_user.id, States.user_config_setting, message.chat.id)
     data.globals.users_dict[user_id]['state'] = bot.get_state(user_id, chat_id)
 
-    query = (f"SELECT {User.metric}, {User.reply_menu} "
-             f"FROM {User.table_name} "
-             f"WHERE (({User.get_user_id(message.from_user.id)}))")
-
+    # query = (f"SELECT {User.metric}, {User.reply_menu} "
+    #          f"FROM {User.table_name} "
+    #          f"WHERE (({User.get_user_id(message.from_user.id)}))")
+    query = User.get_user_config(user_id)
     get_users_settings = read_data_row(query)
     States.user_config_setting.settings_dict = copy.deepcopy(get_users_settings[0])
 
     settings_change_output(chat_id, message, user_id)
-    # TODO continue
 
 
 @bot.message_handler(state=States.config_settings)

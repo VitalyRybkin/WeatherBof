@@ -1,5 +1,4 @@
 
-
 from telebot import types
 
 from keyboards.inline.inline_buttons import (
@@ -9,7 +8,7 @@ from keyboards.inline.inline_buttons import (
 )
 from loader import bot
 from midwares.db_conn_center import read_data, write_data
-from midwares.sql_lib import User, Current, Daily, Hourly
+from midwares.sql_lib import User, Current, Daily, Hourly, Default
 from states.bot_states import States
 from utils.reply_center import Reply
 import data.globals
@@ -39,6 +38,8 @@ def start_command(message):
                    f'VALUES (({User.get_user_id(user_id)}))')
         write_data(f'INSERT INTO {Hourly.table_name} ("{Hourly.hourly_weather_user_id}") '
                    f'VALUES (({User.get_user_id(user_id)}))')
+        write_data(f'INSERT INTO {Default.table_name} ("{Default.default_user_id}") '
+                   f'VALUES (({User.get_user_id(user_id)}))')
         bot.send_message(
             chat_id,
             f"Hello, {message.from_user.first_name}!\n"
@@ -60,6 +61,7 @@ def start_command(message):
             data.globals.users_dict[user_id]['state'] = None
             # TODO setting state in users dict
             # TODO delete/edit messages
+            # TODO reply menu - onetouch, wishlist, fav loc
 
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)

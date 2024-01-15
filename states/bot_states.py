@@ -19,4 +19,6 @@ class States(StatesGroup):
     change_setting = State()
     user_config_setting = State()
     config_settings = State()
-
+    default_config_prompt = State()
+    default_setting = State()
+    set_duration_prompt = State()
