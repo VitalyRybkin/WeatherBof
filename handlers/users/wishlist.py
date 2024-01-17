@@ -28,7 +28,7 @@ def wishlist_command(message):
     if get_wishlist:
         markup = types.InlineKeyboardMarkup()
         for loc in get_wishlist:
-            markup.add(types.InlineKeyboardButton(loc[0], callback_data="Set up output"))
+            markup.add(types.InlineKeyboardButton(loc[0], callback_data=f"Wishlist output|{loc[0]}"))
         markup.add(inline_cancel_btn())
         msg = bot.send_message(message.chat.id, 'Your wishlist:', reply_markup=markup)
         bot.set_state(message.from_user.id, States.wishlist, message.chat.id)

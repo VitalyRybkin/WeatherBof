@@ -1,6 +1,7 @@
 from telebot import types
 
 import data
+from handlers.users.my import my_prompt_msg
 from keyboards.inline.inline_buttons import inline_set_wishlist_btn, inline_cancel_btn
 from loader import bot
 from midwares.db_conn_center import write_data
@@ -85,3 +86,11 @@ def remove_from_wishlist(call) -> None:
         message_id=data.globals.users_dict[call.from_user.id]["message_id"],
         reply_markup=markup,
     )
+
+
+@bot.callback_query_handler(func=lambda call: "Wishlist output" in call.data)
+def wishlist_loc_output(call):
+    States.my_prompt.user_id = call.from_user.id
+    parse_callback = call.data.split("|")
+    States.my_prompt.city = parse_callback[1]
+    my_prompt_msg(call.message)

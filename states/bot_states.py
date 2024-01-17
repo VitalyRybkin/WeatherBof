@@ -22,3 +22,6 @@ class States(StatesGroup):
     default_config_prompt = State()
     default_setting = State()
     set_duration_prompt = State()
+    weather_display = State()
+    weather_display_hourly = State()
+    weather_display_daily = State()

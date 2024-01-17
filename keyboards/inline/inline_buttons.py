@@ -56,15 +56,15 @@ def inline_empty_wishlist_btn():
 
 
 def inline_current_weather_btn():
-    return types.InlineKeyboardButton(ButtonSigns.current, callback_data=Current.table_name)
+    return types.InlineKeyboardButton(ButtonSigns.current, callback_data=f"{Current.table_name}_display")
 
 
-def inline_hourly_weather_btn(msg_text):
-    return types.InlineKeyboardButton(ButtonSigns.hourly_weather + msg_text, callback_data=Hourly.table_name)
+def inline_hourly_weather_btn():
+    return types.InlineKeyboardButton(ButtonSigns.hourly_weather, callback_data=f"{Hourly.table_name}_display")
 
 
-def inline_daily_weather_btn(msg_text):
-    return types.InlineKeyboardButton(ButtonSigns.daily_weather + msg_text, callback_data=Daily.table_name)
+def inline_daily_weather_btn():
+    return types.InlineKeyboardButton(ButtonSigns.daily_weather, callback_data=f"{Daily.table_name}_display")
 
 
 def inline_current_settings_btn():

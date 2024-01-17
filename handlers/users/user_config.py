@@ -25,7 +25,6 @@ def user_config(message):
     #         reply_markup="")
 
     bot.set_state(message.from_user.id, States.user_config_setting, message.chat.id)
-    data.globals.users_dict[user_id]['state'] = bot.get_state(user_id, chat_id)
 
     # query = (f"SELECT {User.metric}, {User.reply_menu} "
     #          f"FROM {User.table_name} "
@@ -47,12 +46,13 @@ def configuring_settings(message):
 
 def settings_change_output(chat_id, message, user_id):
     markup = types.InlineKeyboardMarkup()
-    metric = f"units: {States.user_config_setting.settings_dict['metric']}"
-    reply_menu = f'bottom menu: {"yes" if States.user_config_setting.settings_dict["reply_menu"] else "no"}'
+    metric = f"UNITS: {States.user_config_setting.settings_dict['metric']}"
+    reply_menu = f'BOTTOM MENU: {"yes" if States.user_config_setting.settings_dict["reply_menu"] else "no"}'
     markup.add(types.InlineKeyboardButton(metric, callback_data="metric"))
     markup.add(types.InlineKeyboardButton(reply_menu, callback_data="reply_menu"))
-    delete_msg(chat_id, user_id)
     markup.add(inline_save_settings_btn(User.table_name))
     markup.add(inline_exit_btn())
+
+    delete_msg(chat_id, user_id)
     msg = bot.send_message(message.chat.id, "Tap to change setting:", reply_markup=markup)
     data.globals.users_dict[user_id]['message_id'] = msg.message_id

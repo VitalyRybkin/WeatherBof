@@ -56,10 +56,10 @@ def start_command(message):
             data.globals.users_dict.setdefault(user_id, dict())
             data.globals.users_dict[user_id]['count_not_defined'] = 0
             data.globals.users_dict[user_id]['message_id'] = 0
-            data.globals.users_dict[user_id]['user_id'] = user_id
+            # data.globals.users_dict[user_id]['user_id'] = user_id
             data.globals.users_dict[user_id]['chat_id'] = chat_id
-            data.globals.users_dict[user_id]['state'] = None
-            # TODO setting state in users dict
+            # data.globals.users_dict[user_id]['state'] = None
+            # data.globals.users_dict[user_id]['city'] = None
             # TODO delete/edit messages
             # TODO reply menu - onetouch, wishlist, fav loc
 
@@ -87,6 +87,7 @@ def start_command(message):
                 reply_markup=set_city_keyboard,
             )
         else:
+            # TODO add keyboard and set state
             check_weather_keyboard = show_weather()
             msg = bot.send_message(
                 chat_id,

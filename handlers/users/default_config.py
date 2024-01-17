@@ -18,7 +18,6 @@ def default_settings_prompt(message):
     chat_id = message.chat.id
 
     bot.set_state(user_id, States.default_config_prompt, chat_id)
-    data.globals.users_dict[user_id]["state"] = bot.get_state(user_id, chat_id)
 
     query = Default.get_default_settings(user_id)
     get_default_settings = read_data_row(query)

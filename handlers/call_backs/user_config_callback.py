@@ -17,3 +17,4 @@ def set_metric(call):
 @bot.callback_query_handler(func=lambda call: call.data == 'reply_menu')
 def set_reply_menu(call):
     print("ku")
+    # TODO todo

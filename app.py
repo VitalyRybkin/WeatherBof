@@ -6,10 +6,13 @@ import signal
 import sqlite3
 
 from telebot import custom_filters
-
+from telebot.handler_backends import StatesGroup
 
 from loader import bot
 import handlers
+from midwares.db_conn_center import read_data_row
+from midwares.sql_lib import User
+from states.bot_states import States
 from utils.notifications import admin_notify
 from utils.bot_commands import set_menu_commands
 from data import config
@@ -62,15 +65,26 @@ if __name__ == "__main__":
         #     data.globals.users_dict = pickle.load(f)
         with open("./data/user_dict.json", "r") as read_dict:
             json_dict = json.load(read_dict)
-        new_dict = {}
-        for k, v in json_dict.items():
-            new_dict[int(k)] = v
-            if v['state'] is None and not v['message_id'] == 0:
-                print(v['chat_id'], v['message_id'])
-                bot.delete_message(v['chat_id'], v['message_id'])
-                v['message_id'] = 0
-            bot.set_state(v['user_id'], v['state'], v['chat_id'])
-        data.globals.users_dict = copy.deepcopy(new_dict)
+    new_dict = {}
+    for k, v in json_dict.items():
+        new_dict[int(k)] = v
+        # if v['state'] is None and not v['message_id'] == 0:
+        if not v['message_id'] == 0:
+            bot.delete_message(v['chat_id'], v['message_id'])
+            v['message_id'] = 0
+        # bot.set_state(v['user_id'], v['state'], v['chat_id'])
+        # for atr in vars(States):
+        #     if not atr.startswith('_'):
+        #         atr = getattr(States, atr)
+        #         atr.user_id = v['user_id']
+        #
+        # # query = (f"SELECT {User.user_city} "
+        # #          f"FROM {User.table_name} "
+        # #          f"WHERE {User.bot_user}={v['user_id']}")
+        # #
+        # # get_users_location = read_data_row(query)
+        # # atr.city = get_users_location[0]['user_city']
+    data.globals.users_dict = copy.deepcopy(new_dict)
 
     if not os.path.exists(f'./data/{DATABASE}'):
         with sqlite3.connect(f'./data/{DATABASE}') as connection:
