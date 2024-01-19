@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS favorite_city (
     favorite_user_id INTEGER NOT NULL,
     user_favorite_city_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (favorite_city_id)
-    FOREIGN KEY (favorite_user_id) REFERENCES bot_user(id)
+    FOREIGN KEY (favorite_user_id) REFERENCES bot_user(user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS current_weather (
     visibility INTEGER CHECK (visibility=0 OR visibility=1) DEFAULT 0,
     humidity INTEGER CHECK (humidity=0 OR humidity=1) DEFAULT 0,
     PRIMARY KEY (current_weather_id)
-    FOREIGN KEY (current_weather_user_id) REFERENCES bot_user(id)
+    FOREIGN KEY (current_weather_user_id) REFERENCES bot_user(user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS daily_weather (
     visibility INTEGER CHECK (visibility=0 OR visibility=1) DEFAULT 0,
     humidity INTEGER CHECK (humidity=0 OR humidity=1) DEFAULT 0,
     PRIMARY KEY (daily_weather_id)
-    FOREIGN KEY (daily_weather_user_id) REFERENCES bot_user(id)
+    FOREIGN KEY (daily_weather_user_id) REFERENCES bot_user(user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS hourly_weather (
     visibility INTEGER CHECK (visibility=0 OR visibility=1) DEFAULT 0,
     humidity INTEGER CHECK (humidity=0 OR humidity=1) DEFAULT 0,
     PRIMARY KEY (hourly_weather_id)
-    FOREIGN KEY (hourly_weather_user_id) REFERENCES bot_user(id)
+    FOREIGN KEY (hourly_weather_user_id) REFERENCES bot_user(user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS default_weather (
     daily_weather INTEGER CHECK (daily_weather IN (1, 2, 3) ) DEFAULT 3,
     hourly_weather INTEGER CHECK (hourly_weather BETWEEN 1 AND 12) DEFAULT 6,
     PRIMARY KEY (default_weather_id)
-    FOREIGN KEY (default_user_id) REFERENCES bot_user(id)
+    FOREIGN KEY (default_user_id) REFERENCES bot_user(user_id)
 );
 
 CREATE INDEX IF NOT EXISTS favorites_id_index ON favorite_city(favorite_city_id);

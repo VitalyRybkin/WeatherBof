@@ -1,31 +1,41 @@
 from telebot import types
-from utils.button_text import ButtonSigns
+
+from midwares.db_conn_center import read_data, read_data_row
+from midwares.sql_lib import Favorite, User
 
 
-def reply_set_button():
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    set_city = types.KeyboardButton(ButtonSigns.setting_location)
-    cancel = types.KeyboardButton(ButtonSigns.cancel)
-    markup.add(set_city, cancel)
+def reply_bottom_menu_kb(user_id):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    query = (
+        f"SELECT {User.user_city}, {User.reply_menu} "
+        f"FROM {User.table_name} "
+        f"WHERE {User.bot_user}={user_id}"
+    )
+    get_user_reply_menu_setting = read_data_row(query)
+
+    if get_user_reply_menu_setting[0]["reply_menu"]:
+        if get_user_reply_menu_setting[0]["user_city"] is not None:
+            markup.add(
+                types.KeyboardButton(
+                    f"/my - {get_user_reply_menu_setting[0]['user_city']}"
+                )
+            )
+            markup.add(
+                types.KeyboardButton(
+                    f"/onetouch - {get_user_reply_menu_setting[0]['user_city']}"
+                )
+            )
+        query = (
+            f"SELECT {Favorite.user_favorite_city_name} "
+            f"FROM {Favorite.table_name} "
+            f"WHERE {Favorite.favorite_user_id}="
+            f"({User.get_user_id(user_id)})"
+        )
+        get_user_wishlist = read_data(query)
+
+        if get_user_wishlist:
+            markup.add(types.KeyboardButton("/wishlist"))
+    else:
+        markup = types.ReplyKeyboardRemove()
 
     return markup
-
-
-def reply_cancel_button():
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    cancel = types.KeyboardButton(ButtonSigns.cancel)
-    markup.add(cancel)
-
-    return markup
-
-
-def reply_cancel_btn():
-    return types.KeyboardButton(ButtonSigns.cancel)
-
-
-def reply_set_btn():
-    return types.KeyboardButton(ButtonSigns.setting_location)
-
-
-def reply_add_favorite_btn():
-    return types.KeyboardButton(ButtonSigns.set_favorite_location)

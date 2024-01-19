@@ -1,8 +1,15 @@
 from telebot import types
 
 import data
-from keyboards.inline.inline_buttons import inline_current_settings_btn, inline_daily_settings_btn, \
-    inline_cancel_btn, inline_hourly_settings_btn, inline_change_settings_btn, inline_save_settings_btn, inline_exit_btn
+from keyboards.inline.inline_buttons import (
+    inline_current_settings_btn,
+    inline_daily_settings_btn,
+    inline_cancel_btn,
+    inline_hourly_settings_btn,
+    inline_change_settings_btn,
+    inline_save_settings_btn,
+    inline_exit_btn,
+)
 from loader import bot
 from midwares.sql_lib import Current, Hourly, Daily
 from states.bot_states import States
@@ -11,21 +18,31 @@ from states.bot_states import States
 @bot.message_handler(commands=["prefs"])
 @bot.message_handler(state=States.customize_prompt)
 def preferences(message):
-    if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
-            and not bot.get_state(message.from_user.id, message.chat.id) == States.customize_prompt):
+    if (
+        not data.globals.users_dict[message.from_user.id]["message_id"] == 0
+        and not bot.get_state(message.from_user.id, message.chat.id)
+        == States.customize_prompt
+    ):
         bot.edit_message_reply_markup(
             message.chat.id,
-            message_id=data.globals.users_dict[message.from_user.id]['message_id'],
-            reply_markup="")
+            message_id=data.globals.users_dict[message.from_user.id]["message_id"],
+            reply_markup="",
+        )
 
     bot.set_state(message.from_user.id, States.customize_prompt, message.chat.id)
 
     markup = types.InlineKeyboardMarkup()
-    markup.add(inline_current_settings_btn(), inline_hourly_settings_btn(), inline_daily_settings_btn())
+    markup.add(
+        inline_current_settings_btn(),
+        inline_hourly_settings_btn(),
+        inline_daily_settings_btn(),
+    )
     markup.add(inline_cancel_btn())
 
-    msg = bot.send_message(message.chat.id, "Customize your weather display:", reply_markup=markup)
-    data.globals.users_dict[message.from_user.id]['message_id'] = msg.message_id
+    msg = bot.send_message(
+        message.chat.id, "Customize your weather display:", reply_markup=markup
+    )
+    data.globals.users_dict[message.from_user.id]["message_id"] = msg.message_id
 
 
 @bot.message_handler(state=States.customize_current)
@@ -34,7 +51,9 @@ def customize_current_setting(message):
     chat_id = message.chat.id
 
     setting = Current.table_name
-    settings_change_output(user_id, chat_id, States.customize_current.settings_dict, setting)
+    settings_change_output(
+        user_id, chat_id, States.customize_current.settings_dict, setting
+    )
 
 
 @bot.message_handler(state=States.customize_hourly)
@@ -43,7 +62,9 @@ def customize_hourly_setting(message):
     chat_id = message.chat.id
 
     setting = Hourly.table_name
-    settings_change_output(user_id, chat_id, States.customize_hourly.settings_dict, setting)
+    settings_change_output(
+        user_id, chat_id, States.customize_hourly.settings_dict, setting
+    )
 
 
 @bot.message_handler(state=States.customize_daily)
@@ -52,7 +73,9 @@ def customize_daily_setting(message):
     chat_id = message.chat.id
 
     setting = Daily.table_name
-    settings_change_output(user_id, chat_id, States.customize_daily.settings_dict, setting)
+    settings_change_output(
+        user_id, chat_id, States.customize_daily.settings_dict, setting
+    )
 
 
 @bot.message_handler(state=States.change_setting)
@@ -100,9 +123,7 @@ def settings_change_output(user_id, chat_id, get_settings, setting):
     markup.add(inline_change_settings_btn(setting), inline_cancel_btn())
     settings = "\U0001F4C3  <b>Advanced settings:</b>\n"
     settings = create_output_msg(get_settings, settings)
-    msg = bot.send_message(
-        chat_id, settings, parse_mode="HTML", reply_markup=markup
-    )
+    msg = bot.send_message(chat_id, settings, parse_mode="HTML", reply_markup=markup)
     bot.edit_message_reply_markup(
         chat_id,
         message_id=data.globals.users_dict[user_id]["message_id"],
@@ -114,8 +135,8 @@ def settings_change_output(user_id, chat_id, get_settings, setting):
 def create_output_msg(get_settings, settings):
     for row in get_settings:
         for k, v in row.items():
-            if '_' in k:
-                k = k.replace('_', ' (') + ')'
+            if "_" in k:
+                k = k.replace("_", " (") + ")"
             if v == 0:
                 settings += f"      - {k}: <b>no</b>\n"
                 continue

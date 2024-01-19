@@ -8,7 +8,6 @@ import data.globals as global_var
 
 @bot.message_handler(content_types=["text"])
 def typed_commands(message):
-
     reply_user_from = Reply(message)
     if message.text.lower().strip() == "start":
         global_var.count_not_defined_typings = 0

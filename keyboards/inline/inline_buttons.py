@@ -24,64 +24,96 @@ def inline_exit_btn():
 
 
 def inline_set_location_prompt_btn():
-    return types.InlineKeyboardButton(ButtonSigns.setting_location, callback_data=f"Set prompt")
+    return types.InlineKeyboardButton(
+        ButtonSigns.setting_location, callback_data=f"Set prompt"
+    )
 
 
 def inline_set_location_btn(to_where, location):
-    return types.InlineKeyboardButton(ButtonSigns.set_favorite_location, callback_data=f"Add|{to_where}|{location}")
+    return types.InlineKeyboardButton(
+        ButtonSigns.set_favorite_location, callback_data=f"Add|{to_where}|{location}"
+    )
 
 
 def inline_add_location_prompt_btn():
-    return types.InlineKeyboardButton(ButtonSigns.adding_location, callback_data=f"Add prompt")
+    return types.InlineKeyboardButton(
+        ButtonSigns.adding_location, callback_data=f"Add prompt"
+    )
 
 
 def inline_add_location_btn(to_where, location):
-    return types.InlineKeyboardButton(ButtonSigns.add_wishlist_location, callback_data=f"Add|{to_where}|{location}")
+    return types.InlineKeyboardButton(
+        ButtonSigns.add_wishlist_location, callback_data=f"Add|{to_where}|{location}"
+    )
 
 
 def inline_set_wishlist_btn():
-    return types.InlineKeyboardButton(ButtonSigns.set_wishlist, callback_data=f"Change wishlist")
+    return types.InlineKeyboardButton(
+        ButtonSigns.set_wishlist, callback_data=f"Change wishlist"
+    )
 
 
 def inline_change_location_prompt_btn():
-    return types.InlineKeyboardButton(ButtonSigns.changing_location, callback_data=f"Change prompt")
+    return types.InlineKeyboardButton(
+        ButtonSigns.changing_location, callback_data=f"Change prompt"
+    )
 
 
 def inline_change_location_btn(to_where, location):
-    return types.InlineKeyboardButton(ButtonSigns.change_favorite_location, callback_data=f"Add|{to_where}|{location}")
+    return types.InlineKeyboardButton(
+        ButtonSigns.change_favorite_location, callback_data=f"Add|{to_where}|{location}"
+    )
 
 
 def inline_empty_wishlist_btn():
-    return types.InlineKeyboardButton(ButtonSigns.clear_wishlist, callback_data="Clear wishlist")
+    return types.InlineKeyboardButton(
+        ButtonSigns.clear_wishlist, callback_data="Clear wishlist"
+    )
 
 
 def inline_current_weather_btn():
-    return types.InlineKeyboardButton(ButtonSigns.current, callback_data=f"{Current.table_name}_display")
+    return types.InlineKeyboardButton(
+        ButtonSigns.current, callback_data=f"{Current.table_name}_display"
+    )
 
 
 def inline_hourly_weather_btn():
-    return types.InlineKeyboardButton(ButtonSigns.hourly_weather, callback_data=f"{Hourly.table_name}_display")
+    return types.InlineKeyboardButton(
+        ButtonSigns.hourly_weather, callback_data=f"{Hourly.table_name}_display"
+    )
 
 
 def inline_daily_weather_btn():
-    return types.InlineKeyboardButton(ButtonSigns.daily_weather, callback_data=f"{Daily.table_name}_display")
+    return types.InlineKeyboardButton(
+        ButtonSigns.daily_weather, callback_data=f"{Daily.table_name}_display"
+    )
 
 
 def inline_current_settings_btn():
-    return types.InlineKeyboardButton(ButtonSigns.current_weather, callback_data="Current settings")
+    return types.InlineKeyboardButton(
+        ButtonSigns.current_weather, callback_data="Current settings"
+    )
 
 
 def inline_hourly_settings_btn():
-    return types.InlineKeyboardButton(ButtonSigns.hourly_weather, callback_data="Hourly settings")
+    return types.InlineKeyboardButton(
+        ButtonSigns.hourly_weather, callback_data="Hourly settings"
+    )
 
 
 def inline_daily_settings_btn():
-    return types.InlineKeyboardButton(ButtonSigns.daily_weather, callback_data="Daily settings")
+    return types.InlineKeyboardButton(
+        ButtonSigns.daily_weather, callback_data="Daily settings"
+    )
 
 
 def inline_change_settings_btn(which):
-    return types.InlineKeyboardButton(ButtonSigns.change_favorite_location, callback_data=f"Change|{which}")
+    return types.InlineKeyboardButton(
+        ButtonSigns.change_favorite_location, callback_data=f"Change|{which}"
+    )
 
 
 def inline_save_settings_btn(which):
-    return types.InlineKeyboardButton(ButtonSigns.save_settings, callback_data=f"Save|{which}")
+    return types.InlineKeyboardButton(
+        ButtonSigns.save_settings, callback_data=f"Save|{which}"
+    )

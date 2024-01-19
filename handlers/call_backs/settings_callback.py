@@ -1,6 +1,11 @@
 import data
-from handlers.users.preferences import customize_current_setting, customize_daily_setting, customize_hourly_setting, \
-    change_settings
+from handlers.users.preferences import (
+    customize_current_setting,
+    customize_daily_setting,
+    customize_hourly_setting,
+    change_settings,
+)
+from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
 from midwares.db_conn_center import read_data_row, write_data
 from midwares.sql_lib import Current, User, Daily, Hourly, Default
@@ -8,7 +13,8 @@ from states.bot_states import States
 
 
 @bot.callback_query_handler(
-    func=lambda call: call.data in ["Current settings", "Daily settings", "Hourly settings"]
+    func=lambda call: call.data
+    in ["Current settings", "Daily settings", "Hourly settings"]
 )
 def current_settings(call) -> None:
     """
@@ -49,15 +55,17 @@ def current_settings(call) -> None:
             )
             States.customize_daily.user_id = call.from_user.id
 
-            settings = ("<b>\U0001F4C2 Daily weather settings:</b>\n\n"
-                        "\U0001F4C4 <b>Default output:</b>\n"
-                        "       - max temperature;\n"
-                        "       - min temperature;\n"
-                        "       - average temperature;\n"
-                        "       - max wind;\n"
-                        "       - total precipitations;\n"
-                        "       - chance of rain;\n"
-                        "       - chance of snow;\n")
+            settings = (
+                "<b>\U0001F4C2 Daily weather settings:</b>\n\n"
+                "\U0001F4C4 <b>Default output:</b>\n"
+                "       - max temperature;\n"
+                "       - min temperature;\n"
+                "       - average temperature;\n"
+                "       - max wind;\n"
+                "       - total precipitations;\n"
+                "       - chance of rain;\n"
+                "       - chance of snow;\n"
+            )
 
             bot.send_message(call.message.chat.id, settings, parse_mode="HTML")
             query = (
@@ -74,15 +82,17 @@ def current_settings(call) -> None:
                 call.from_user.id, States.customize_hourly, call.message.chat.id
             )
             States.customize_hourly.user_id = call.from_user.id
-            settings = ("<b>\U0001F4C2 Hourly weather settings:</b>\n\n"
-                        "\U0001F4C4 <b>Default output:</b>\n"
-                        "       - temperature;\n"
-                        "       - 'feels like' temperature;\n"
-                        "       - wind;\n"
-                        "       - clouds; \n"
-                        "       - chance of rain;\n"
-                        "       - chance of snow;\n"
-                        "       - precipitations;\n")
+            settings = (
+                "<b>\U0001F4C2 Hourly weather settings:</b>\n\n"
+                "\U0001F4C4 <b>Default output:</b>\n"
+                "       - temperature;\n"
+                "       - 'feels like' temperature;\n"
+                "       - wind;\n"
+                "       - clouds; \n"
+                "       - chance of rain;\n"
+                "       - chance of snow;\n"
+                "       - precipitations;\n"
+            )
 
             bot.send_message(call.message.chat.id, settings, parse_mode="HTML")
             query = (
@@ -139,39 +149,42 @@ def switch_setting(call):
 @bot.callback_query_handler(func=lambda call: "Save" in call.data)
 def save_settings(call):
     parse_call_data = call.data.split("|")
-    table_name = fields = condition = ''
+    table_name = fields = condition = msg_text = ""
     match parse_call_data[1]:
         case Current.table_name:
             table_name = Current.table_name
             # condition = Current.table_name + '_user_id'
             condition = Current.current_weather_user_id
             for k, v in States.customize_current.settings_dict[0].items():
-                fields += k + f'={v}, '
+                fields += k + f"={v}, "
         case Hourly.table_name:
             table_name = Hourly.table_name
             # condition = Hourly.table_name + '_user_id'
             condition = Hourly.hourly_weather_user_id
             for k, v in States.customize_hourly.settings_dict[0].items():
-                fields += k + f'={v}, '
+                fields += k + f"={v}, "
         case Daily.table_name:
             table_name = Daily.table_name
             # condition = Daily.table_name + '_user_id'
             condition = Daily.daily_weather_user_id
             for k, v in States.customize_daily.settings_dict[0].items():
-                fields += k + f'={v}, '
+                fields += k + f"={v}, "
         case User.table_name:
             table_name = User.table_name
-            condition = User.bot_user
+            condition = User.user_id
             for k, v in States.user_config_setting.settings_dict.items():
                 v = v if isinstance(v, int) else f"'{v}'"
-                fields += k + f'={v}, '
+                fields += k + f"={v}, "
+            if States.user_config_setting.settings_dict["reply_menu"] == 1:
+                msg_text = "You can hide your bottom menu here /userconfig !"
+            else:
+                msg_text = "You can pop up your bottom menu here /userconfig !:"
         case Default.table_name:
             table_name = Default.table_name
             condition = Default.default_user_id
             for k, v in States.default_setting.settings_dict.items():
                 v = v if isinstance(v, int) else f"'{v}'"
-                fields += k + f'={v}, '
-
+                fields += k + f"={v}, "
     fields = fields[:-2]
     query = (
         f"UPDATE {table_name} "
@@ -183,4 +196,12 @@ def save_settings(call):
 
     write_data(query)
 
-    bot.send_message(call.message.chat.id, "\U00002705 Saved!")
+    bot.send_message(call.message.chat.id, f"\U00002705 Saved!")
+
+    if msg_text:
+        keyboards = reply_bottom_menu_kb(call.from_user.id)
+        bot.send_message(
+            call.message.chat.id,
+            msg_text,
+            reply_markup=keyboards,
+        )

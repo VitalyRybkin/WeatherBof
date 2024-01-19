@@ -11,7 +11,7 @@ from states.bot_states import States
 from utils.global_functions import delete_msg
 
 
-@bot.message_handler(commands=['userconfig'])
+@bot.message_handler(commands=["userconfig"])
 @bot.message_handler(state=States.user_config_setting)
 def user_config(message):
     user_id = message.from_user.id
@@ -54,5 +54,7 @@ def settings_change_output(chat_id, message, user_id):
     markup.add(inline_exit_btn())
 
     delete_msg(chat_id, user_id)
-    msg = bot.send_message(message.chat.id, "Tap to change setting:", reply_markup=markup)
-    data.globals.users_dict[user_id]['message_id'] = msg.message_id
+    msg = bot.send_message(
+        message.chat.id, "Tap to change setting:", reply_markup=markup
+    )
+    data.globals.users_dict[user_id]["message_id"] = msg.message_id

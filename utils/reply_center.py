@@ -49,7 +49,7 @@ class Reply:
             # "/start": "Start weathering, start seeing the future!",
             "/my": "weather of your favorite location (just set one).",
             "/onetouch": "weather forecast of your favorite location upon your "
-                         "default settings.",
+            "default settings.",
             "/default": "default settings for 'onetouch' display weather.",
             "/set": "set/reset your favorite location.",
             # "/del": "Just remove your favorite location out of our minds for good!",

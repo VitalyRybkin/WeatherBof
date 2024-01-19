@@ -2,6 +2,7 @@ from telebot import types
 
 import data
 from keyboards.inline.inline_buttons import inline_cancel_btn
+from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
 from midwares.db_conn_center import write_data, read_data
 from midwares.sql_lib import User, Favorite
@@ -55,7 +56,7 @@ def callback_query(call) -> None:
             f"WHERE {User.bot_user}={call.from_user.id}"
         )
         write_data(query)
-        data.globals.users_dict[call.from_user.id]["city"] = parse_call_data[2]
+
     elif parse_call_data[1] == "wishlist":
         query = (
             f"SELECT {Favorite.user_favorite_city_name} "
@@ -118,3 +119,10 @@ def callback_query(call) -> None:
         reply_markup="",
     )
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
+
+    keyboards = reply_bottom_menu_kb(call.from_user.id)
+    bot.send_message(
+        call.message.chat.id,
+        "You can hide bottom menu here /userconfig !",
+        reply_markup=keyboards,
+    )

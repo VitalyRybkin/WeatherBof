@@ -21,6 +21,8 @@ def cancel(call) -> None:
         message_id=data.globals.users_dict[call.from_user.id]["message_id"],
         reply_markup="",
     )
-    
+
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
-    data.globals.users_dict[call.from_user.id]['state'] = bot.get_state(call.from_user.id, call.message.chat.id)
+    data.globals.users_dict[call.from_user.id]["state"] = bot.get_state(
+        call.from_user.id, call.message.chat.id
+    )

@@ -6,7 +6,7 @@ import data
 from keyboards.inline.inline_buttons import inline_save_settings_btn, inline_exit_btn
 from loader import bot
 from midwares.db_conn_center import read_data_row
-from midwares.sql_lib import Default, Hourly, Daily
+from midwares.sql_lib import Default, Hourly, Daily, User
 from states.bot_states import States
 from utils.global_functions import delete_msg
 
@@ -19,9 +19,9 @@ def default_settings_prompt(message):
 
     bot.set_state(user_id, States.default_config_prompt, chat_id)
 
-    query = Default.get_default_settings(user_id)
-    get_default_settings = read_data_row(query)
+    query = Default.get_default_settings(f"({User.get_user_id(user_id)})")
 
+    get_default_settings = read_data_row(query)
     States.default_setting.settings_dict = copy.deepcopy(get_default_settings[0])
     settings_change_output(chat_id, message, user_id)
 
@@ -44,7 +44,9 @@ def set_duration(message):
         try:
             duration = int(message.text)
             if duration in range(4):
-                States.default_setting.settings_dict["daily_weather"] = int(message.text)
+                States.default_setting.settings_dict["daily_weather"] = int(
+                    message.text
+                )
                 bot.set_state(user_id, States.default_setting, chat_id)
                 default_config_setting(message)
                 return
@@ -66,7 +68,9 @@ def set_duration(message):
             else:
                 msg_text = "\U00002757 Hours must be in range 1 to 12! (6-hour forecast recommended)"
         except ValueError:
-            msg_text = "Type in of hours forecast - <b>1 to 12-hour forecast available</b>:"
+            msg_text = (
+                "Type in of hours forecast - <b>1 to 12-hour forecast available</b>:"
+            )
 
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton("\U00002B05 Back", callback_data="back"))

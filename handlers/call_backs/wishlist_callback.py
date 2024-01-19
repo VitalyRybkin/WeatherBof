@@ -3,6 +3,7 @@ from telebot import types
 import data
 from handlers.users.my import my_prompt_msg
 from keyboards.inline.inline_buttons import inline_set_wishlist_btn, inline_cancel_btn
+from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
 from midwares.db_conn_center import write_data
 from midwares.sql_lib import Favorite, User
@@ -30,10 +31,17 @@ def clear_wishlist(call) -> None:
     )
     # bot.send_message(call.message.chat.id, "Your /wishlist is empty! /add location?")
     bot.send_message(
-        call.message.chat.id, "\U00002705 Your wishlist is empty now! /add location?"
+        call.message.chat.id, "\U00002705 Your wishlist is empty now! /add location ?"
     )
     bot.delete_state(call.from_user.id, call.message.chat.id)
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
+
+    keyboards = reply_bottom_menu_kb(call.from_user.id)
+    bot.send_message(
+        call.message.chat.id,
+        "Your bottom menu updated!",
+        reply_markup=keyboards,
+    )
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "Change wishlist")
@@ -94,3 +102,4 @@ def wishlist_loc_output(call):
     parse_callback = call.data.split("|")
     States.my_prompt.city = parse_callback[1]
     my_prompt_msg(call.message)
+    # bot.register_message_handler(callable(my_prompt_msg))

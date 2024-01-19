@@ -9,4 +9,4 @@ from . import help
 from . import default_config
 from . import preferences
 from . import user_config
-from . import commands_workout
+from . import commands_handling

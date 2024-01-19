@@ -12,7 +12,7 @@ class User:
 
     @classmethod
     def get_user_id(cls, *args) -> str:
-        return f"SELECT {cls.bot_user} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
+        return f"SELECT {cls.user_id} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
 
     @classmethod
     def get_user_config(cls, *args):
