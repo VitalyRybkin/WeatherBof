@@ -1,6 +1,8 @@
 import re
 
+from requests import Response
 from telebot import types
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
 import data.globals
 from keyboards.inline.inline_buttons import (
@@ -21,9 +23,14 @@ from states.bot_states import States
 
 @bot.message_handler(commands=["set"])
 @bot.message_handler(state=States.set_location)
-def set_city_prompt(message):
-    user_id = message.from_user.id
-    chat_id = message.chat.id
+def set_city_prompt(message) -> None:
+    """
+    Function. Execute set command.
+    :param message:
+    :return: None
+    """
+    user_id: int = message.from_user.id
+    chat_id: int = message.chat.id
 
     if (
         not data.globals.users_dict[user_id]["message_id"] == 0
@@ -35,13 +42,13 @@ def set_city_prompt(message):
             reply_markup="",
         )
 
-    query = (
+    query: str = (
         f"SELECT {User.user_city} "
         f"FROM {User.table_name} "
         f"WHERE {User.bot_user}={user_id}"
     )
     get_user_info = read_data(query)
-    print(get_user_info)
+
     if get_user_info[0][0] is None:
         markup = types.InlineKeyboardMarkup()
         cancel = inline_cancel_btn()
@@ -52,11 +59,10 @@ def set_city_prompt(message):
             "You haven't set your favorite location, yet!",
             reply_markup=set_location_keyboard,
         )
-        # data.globals.users_dict[user_id]['message_id'] = msg.message_id
     else:
-        markup = types.InlineKeyboardMarkup()
-        cancel = inline_cancel_btn()
-        change_location = inline_change_location_prompt_btn()
+        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+        cancel: InlineKeyboardButton = inline_cancel_btn()
+        change_location: InlineKeyboardButton = inline_change_location_prompt_btn()
         change_location_keyboard = markup.add(change_location, cancel)
         msg = bot.send_message(
             chat_id,
@@ -68,21 +74,21 @@ def set_city_prompt(message):
 
 
 @bot.message_handler(state=States.search_location)
-def search_location(message):
+def search_location(message) -> None:
     """
     Function. Setting users favorite city.
     :return:
     """
 
-    chat_id = message.chat.id
-    user_id = message.from_user.id
+    chat_id: int = message.chat.id
+    user_id: int = message.from_user.id
 
-    bot_answer_formatting = [
+    bot_answer_formatting: list = [
         _.lower().capitalize() for _ in re.split("\\s+|-", message.text.strip())
     ]
-    city_name = "%20".join(bot_answer_formatting)
+    city_name: str = "%20".join(bot_answer_formatting)
 
-    response = get_current_weather(city_name)
+    response: Response = get_current_weather(city_name)
 
     if "error" in response.json().keys() and response.json()["error"]["code"] == 1006:
         bot.send_message(chat_id, response.json()["error"]["message"])
@@ -92,8 +98,8 @@ def search_location(message):
             chat_id, "\U0001F524 Type in location name:", reply_markup=cancel_keyboard
         )
     else:
-        markup = types.InlineKeyboardMarkup()
-        set_location_keyboard = None
+        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+        set_location_keyboard: InlineKeyboardMarkup | None = None
         if States.search_location.operation == "Set prompt":
             set_location_keyboard = markup.row(
                 inline_set_location_btn(
@@ -115,7 +121,7 @@ def search_location(message):
                 ),
                 inline_cancel_btn(),
             )
-        msg = bot.send_message(
+        msg: Message = bot.send_message(
             chat_id,
             f"Location found: \n"
             f"{'name:':<10} {response.json()['location']['name']}\n"

@@ -20,7 +20,7 @@ def get_wishlist(message) -> None:
     :param message:
     :return:
     """
-    print("change : ", bot.get_state(message.from_user.id, message.chat.id))
+
     if (
         not data.globals.users_dict[message.from_user.id]["message_id"] == 0
         and not bot.get_state(message.from_user.id, message.chat.id)

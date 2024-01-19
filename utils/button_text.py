@@ -3,6 +3,10 @@ from dataclasses import dataclass
 
 @dataclass
 class ButtonSigns:
+    """
+    Class. Button text dataclass.
+    """
+
     cancel: str = "\U0000274C Cancel"
     setting_location: str = "\U0001F3E1 Set location"
     adding_location: str = "\U0001F5C3 Add location"

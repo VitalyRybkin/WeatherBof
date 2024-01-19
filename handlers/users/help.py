@@ -3,7 +3,12 @@ from utils.reply_center import Reply
 
 
 @bot.message_handler(commands=["help"])
-def help_message(message):
+def help_message(message) -> None:
+    """
+    Function. Help display.
+    :param message:
+    :return:
+    """
     reply_from = Reply(message)
     res = "\n".join("{} - {}".format(k, v) for k, v in reply_from.help.items())
     # res = '\n'.join(f'{k:<15} - {v}' for k, v in reply_from.help.items())

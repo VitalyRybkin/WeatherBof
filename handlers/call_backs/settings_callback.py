@@ -16,11 +16,11 @@ from states.bot_states import States
     func=lambda call: call.data
     in ["Current settings", "Daily settings", "Hourly settings"]
 )
-def current_settings(call) -> None:
+def user_settings_prompt(call) -> None:
     """
-    Function. Change state, call next step.
+    Function. Change state, display user settings, call next step.
     :param call:
-    :return:
+    :return: None
     """
 
     match call.data:
@@ -107,7 +107,12 @@ def current_settings(call) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: "Change" in call.data)
-def change_setting(call):
+def change_setting(call) -> None:
+    """
+    Function. Setting next state on changing location.
+    :param call:
+    :return: None
+    """
     parse_call_data = call.data.split("|")
     bot.set_state(call.from_user.id, States.change_setting, call.message.chat.id)
     States.change_setting.user_id = call.from_user.id
@@ -117,7 +122,12 @@ def change_setting(call):
 
 
 @bot.callback_query_handler(func=lambda call: "Switch setting" in call.data)
-def switch_setting(call):
+def switch_setting(call) -> None:
+    """
+    Function. Switching user settings on user click button.
+    :param call:
+    :return: None
+    """
     parse_call_data = call.data.split("|")
     match parse_call_data[1]:
         case Current.table_name:
@@ -147,7 +157,12 @@ def switch_setting(call):
 
 
 @bot.callback_query_handler(func=lambda call: "Save" in call.data)
-def save_settings(call):
+def save_settings(call) -> None:
+    """
+    Function. Save user settings.
+    :param call:
+    :return: None
+    """
     parse_call_data = call.data.split("|")
     table_name = fields = condition = msg_text = ""
     match parse_call_data[1]:

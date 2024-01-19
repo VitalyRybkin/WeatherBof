@@ -21,7 +21,7 @@ def empty_wishlist(message) -> None:
     :param message:
     :return:
     """
-    print("empty : ", bot.get_state(message.from_user.id, message.chat.id))
+
     if (
         not data.globals.users_dict[message.from_user.id]["message_id"] == 0
         and not bot.get_state(message.from_user.id, message.chat.id)
@@ -68,4 +68,3 @@ def empty_wishlist(message) -> None:
         )
 
     data.globals.users_dict[message.from_user.id]["message_id"] = msg.message_id
-    print("empty : ", bot.get_state(message.from_user.id, message.chat.id))

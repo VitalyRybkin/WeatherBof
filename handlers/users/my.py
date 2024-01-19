@@ -1,4 +1,5 @@
 from telebot import types
+from telebot.types import Message
 
 import data.globals
 from keyboards.inline.inline_buttons import (
@@ -21,7 +22,7 @@ def my(message) -> None:
     :param message:
     :return:
     """
-    chat_id = message.chat.id
+    chat_id: int = message.chat.id
 
     # if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0 and
     #         not bot.get_state(message.from_user.id, message.chat.id) == States.my_prompt):
@@ -29,7 +30,7 @@ def my(message) -> None:
     #                                   data.globals.users_dict[message.from_user.id]['message_id'],
     #                                   reply_markup="")
 
-    query = (
+    query: str = (
         f"SELECT {User.user_city} "
         f"FROM {User.table_name} "
         f"WHERE {User.bot_user}={message.from_user.id}"
@@ -46,9 +47,14 @@ def my(message) -> None:
 
 
 @bot.message_handler(state=States.my_prompt)
-def my_prompt_msg(message):
-    user_id = States.my_prompt.user_id
-    chat_id = message.chat.id
+def my_prompt_msg(message) -> None:
+    """
+    Function. Display weather of chosen location prompt with inline keyboard menu.
+    :param message:
+    :return:
+    """
+    user_id: int = States.my_prompt.user_id
+    chat_id: int = message.chat.id
 
     bot.set_state(message.from_user.id, States.my_prompt, message.chat.id)
 
@@ -58,7 +64,7 @@ def my_prompt_msg(message):
     markup.add(inline_daily_weather_btn())
     markup.add(inline_cancel_btn())
     delete_msg(chat_id, user_id)
-    msg = bot.send_message(
+    msg: Message = bot.send_message(
         message.chat.id,
         f"Display weather at - <b>{States.my_prompt.city}</b>",
         reply_markup=markup,
@@ -68,9 +74,14 @@ def my_prompt_msg(message):
 
 
 @bot.message_handler(state=States.weather_display_hourly)
-def weather_output_hourly(message):
-    chat_id = message.chat.id
-    user_id = States.weather_display_hourly.user_id
+def weather_output_hourly(message) -> None:
+    """
+    Function. Display hour forecast with 1 to 12 hour inline button keyboard.
+    :param message:
+    :return:
+    """
+    chat_id: int = message.chat.id
+    user_id: int = States.weather_display_hourly.user_id
 
     weather_keyboard = types.InlineKeyboardMarkup()
 
@@ -91,7 +102,7 @@ def weather_output_hourly(message):
     )
 
     delete_msg(chat_id, user_id)
-    msg = bot.send_message(
+    msg: Message = bot.send_message(
         chat_id,
         f"Tap to show weather at - <b>{States.my_prompt.city}</b>",
         reply_markup=weather_keyboard,
@@ -101,9 +112,14 @@ def weather_output_hourly(message):
 
 
 @bot.message_handler(state=States.weather_display_daily)
-def weather_output_daily(message):
-    chat_id = message.chat.id
-    user_id = States.weather_display_daily.user_id
+def weather_output_daily(message) -> None:
+    """
+    Function. Display day forecast with 1 to 3 day inline button keyboard.
+    :param message:
+    :return:
+    """
+    chat_id: int = message.chat.id
+    user_id: int = States.weather_display_daily.user_id
 
     weather_keyboard = types.InlineKeyboardMarkup()
 
@@ -121,7 +137,7 @@ def weather_output_daily(message):
     )
 
     delete_msg(chat_id, user_id)
-    msg = bot.send_message(
+    msg: Message = bot.send_message(
         chat_id, "Tap to show weather:", reply_markup=weather_keyboard
     )
     data.globals.users_dict[user_id]["message_id"] = msg.message_id

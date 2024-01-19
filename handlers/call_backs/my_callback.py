@@ -9,7 +9,12 @@ from states.bot_states import States
     func=lambda call: call.data
     in [f"{Hourly.table_name}_display", f"{Daily.table_name}_display"]
 )
-def set_weather_display(call):
+def set_weather_display(call) -> None:
+    """
+    Function. Setting next state.
+    :param call:
+    :return:
+    """
     if call.data == f"{Hourly.table_name}_display":
         bot.set_state(
             call.from_user.id, States.weather_display_hourly, call.message.chat.id
@@ -34,6 +39,11 @@ def set_weather_display(call):
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "back_to_weather_prompt")
-def hourly_weather_prompt(call):
+def hourly_weather_prompt(call) -> None:
+    """
+    Function. Setting previous state.
+    :param call:
+    :return:
+    """
     bot.set_state(call.from_user.id, States.my_prompt, call.message.chat.id)
     my_prompt_msg(call.message)

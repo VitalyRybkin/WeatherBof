@@ -1,13 +1,15 @@
+from telebot.types import Message
+
 import data
 from loader import bot
 
 
-def update_msg_id(message, new_msg):
+def update_msg_id(message, new_msg: Message) -> None:
     """
     Function. Update user message id to edit or delete.
     :param message:
     :param new_msg:
-    :return:
+    :return: None
     """
     if not data.globals.users_dict[message.from_user.id]["message_id"] == 0:
         bot.edit_message_reply_markup(
@@ -18,12 +20,12 @@ def update_msg_id(message, new_msg):
     data.globals.users_dict[message.from_user.id]["message_id"] = new_msg.message_id
 
 
-def delete_msg(chat_id, user_id):
+def delete_msg(chat_id: int, user_id: int) -> None:
     """
     Function. Delete message.
     :param chat_id:
     :param user_id:
-    :return:
+    :return: None
     """
     if not data.globals.users_dict[user_id]["message_id"] == 0:
         bot.delete_message(chat_id, data.globals.users_dict[user_id]["message_id"])

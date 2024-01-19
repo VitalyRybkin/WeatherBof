@@ -1,4 +1,5 @@
 from telebot import types
+from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.inline.inline_buttons import (
     inline_cancel_btn,
@@ -14,18 +15,17 @@ import data.globals
 
 
 @bot.message_handler(commands=["start"])
-def start_command(message):
+def start_command(message) -> None:
     """
     Function. Bot start workout. Check if user is new or old user back. Executes 'start' command. Writes settings in db.
     :param message:
-    :return:
+    :return: None
     """
-    user_id = message.from_user.id
-    chat_id = message.chat.id
+    user_id: int = message.from_user.id
+    chat_id: int = message.chat.id
 
-    query = f"SELECT {User.bot_user}, {User.user_city} FROM {User.table_name} WHERE {User.bot_user}={user_id}"
-    get_user_info = read_data(query)
-    print(get_user_info)
+    query: str = f"SELECT {User.bot_user}, {User.user_city} FROM {User.table_name} WHERE {User.bot_user}={user_id}"
+    get_user_info: list = read_data(query)
 
     if not get_user_info:
         write_data(
@@ -54,8 +54,8 @@ def start_command(message):
             f"From now on, I'm your weather forecasting partner!  \U0001F324 \U000026C8 \U0001F328 \n"
             f"Look, what I can do for you:",
         )
-        reply_from = Reply(message)
-        res = "\n".join("{} - {}".format(k, v) for k, v in reply_from.help.items())
+        reply_from: Reply = Reply(message)
+        res: str = "\n".join("{} - {}".format(k, v) for k, v in reply_from.help.items())
         bot.send_message(chat_id, res)
         bot.send_message(chat_id, "Enjoy!")
 
@@ -85,11 +85,11 @@ def start_command(message):
         bot.set_state(user_id, States.start, chat_id)
 
         if get_user_info[0][1] is None:
-            markup = types.InlineKeyboardMarkup()
-            cancel = inline_cancel_btn()
-            set_city = inline_set_location_prompt_btn()
-            set_city_keyboard = markup.add(set_city, cancel)
-            msg = bot.send_message(
+            markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+            cancel: InlineKeyboardButton = inline_cancel_btn()
+            set_city: InlineKeyboardButton = inline_set_location_prompt_btn()
+            set_city_keyboard: InlineKeyboardMarkup = markup.add(set_city, cancel)
+            msg: Message = bot.send_message(
                 chat_id,
                 "You haven't /set your favorite city, yet!",
                 reply_markup=set_city_keyboard,
@@ -102,7 +102,7 @@ def start_command(message):
             #     f"\U0001F3D9 Your favorite city: \n{get_user_info[0][1]}",
             #     reply_markup=check_weather_keyboard,
             # )
-            keyboards = reply_bottom_menu_kb(message.from_user.id)
+            keyboards: InlineKeyboardMarkup = reply_bottom_menu_kb(message.from_user.id)
             bot.send_message(
                 chat_id,
                 "You can hide bottom menu here /userconfig !",

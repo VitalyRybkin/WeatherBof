@@ -1,21 +1,28 @@
 import copy
+from typing import Any
 
 from telebot import types
+from telebot.types import InlineKeyboardMarkup
 
 import data
 from keyboards.inline.inline_buttons import inline_save_settings_btn, inline_exit_btn
 from loader import bot
 from midwares.db_conn_center import read_data_row
-from midwares.sql_lib import Default, Hourly, Daily, User
+from midwares.sql_lib import Default, Hourly, Daily, User, Current
 from states.bot_states import States
 from utils.global_functions import delete_msg
 
 
 @bot.message_handler(commands=["default"])
 @bot.message_handler(state=States.default_config_prompt)
-def default_settings_prompt(message):
-    user_id = message.from_user.id
-    chat_id = message.chat.id
+def default_settings_prompt(message) -> None:
+    """
+    Function. Default setting display with inline keyboard.
+    :param message:
+    :return:
+    """
+    user_id: int = message.from_user.id
+    chat_id: Any = message.chat.id
 
     bot.set_state(user_id, States.default_config_prompt, chat_id)
 
@@ -27,18 +34,28 @@ def default_settings_prompt(message):
 
 
 @bot.message_handler(state=States.default_setting)
-def default_config_setting(message):
-    user_id = States.default_setting.user_id
-    chat_id = message.chat.id
+def default_config_setting(message) -> None:
+    """
+    Function. Switch to new state.
+    :param message:
+    :return:
+    """
+    user_id: int = States.default_setting.user_id
+    chat_id: int = message.chat.id
 
     settings_change_output(chat_id, message, user_id)
 
 
 @bot.message_handler(state=States.set_duration_prompt)
-def set_duration(message):
-    user_id = States.default_setting.user_id
-    chat_id = message.chat.id
-    msg_text = ""
+def set_duration(message) -> None:
+    """
+    Function. Setting hour and day duration forecast.
+    :param message:
+    :return:
+    """
+    user_id: int = States.default_setting.user_id
+    chat_id: int = message.chat.id
+    msg_text: str = ""
 
     if States.set_duration_prompt.duration == Daily.table_name:
         try:
@@ -81,15 +98,22 @@ def set_duration(message):
     data.globals.users_dict[user_id]["message_id"] = msg.message_id
 
 
-def settings_change_output(chat_id, message, user_id):
-    markup = types.InlineKeyboardMarkup()
-    current = (
+def settings_change_output(chat_id, message, user_id) -> None:
+    """
+    Function. Display setting message with inline keyboard buttons.
+    :param chat_id:
+    :param message:
+    :param user_id:
+    :return:
+    """
+    markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+    current: str = (
         f"\U0001F4C4 CURRENT WEATHER: "
         f'{"yes" if States.default_setting.settings_dict["current_weather"] else "no"}'
     )
-    hourly = f"\U000023F3 HOURLY WEATHER: {States.default_setting.settings_dict['hourly_weather']}-hour forecast"
-    daily = f"\U0001F4C6 DAILY WEATHER: {States.default_setting.settings_dict['daily_weather']}-day forecast"
-    markup.add(types.InlineKeyboardButton(current, callback_data="current_weather"))
+    hourly: str = f"\U000023F3 HOURLY WEATHER: {States.default_setting.settings_dict['hourly_weather']}-hour forecast"
+    daily: str = f"\U0001F4C6 DAILY WEATHER: {States.default_setting.settings_dict['daily_weather']}-day forecast"
+    markup.add(types.InlineKeyboardButton(current, callback_data=Current.table_name))
     markup.add(types.InlineKeyboardButton(hourly, callback_data=Hourly.table_name))
     markup.add(types.InlineKeyboardButton(daily, callback_data=Daily.table_name))
     delete_msg(chat_id, user_id)

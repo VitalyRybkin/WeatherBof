@@ -1,10 +1,15 @@
-from handlers.users.user_config import user_config, configuring_settings
+from handlers.users.user_config import user_config_prompt, configuring_settings
 from loader import bot
 from states.bot_states import States
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "metric")
-def set_metric(call):
+def set_metric(call) -> None:
+    """
+    Function. Switch units in user settings dict.
+    :param call:
+    :return:
+    """
     States.config_settings.user_id = call.from_user.id
     bot.set_state(call.from_user.id, States.config_settings, call.message.chat.id)
     if States.user_config_setting.settings_dict["metric"] == "metric":
@@ -15,7 +20,12 @@ def set_metric(call):
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "reply_menu")
-def set_reply_menu(call):
+def set_reply_menu(call) -> None:
+    """
+    Function. Switch bottom menu on/off in user settings dict.
+    :param call:
+    :return:
+    """
     States.config_settings.user_id = call.from_user.id
     bot.set_state(call.from_user.id, States.config_settings, call.message.chat.id)
     if States.user_config_setting.settings_dict["reply_menu"]:

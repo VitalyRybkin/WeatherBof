@@ -1,4 +1,5 @@
 from telebot import types
+from telebot.types import InlineKeyboardMarkup, Message, InlineKeyboardButton
 
 import data.globals
 from keyboards.inline.inline_buttons import (
@@ -13,7 +14,12 @@ from states.bot_states import States
 
 @bot.message_handler(commands=["wishlist"])
 @bot.message_handler(state=States.wishlist)
-def wishlist_command(message):
+def wishlist_prompt(message) -> None:
+    """
+    Function. Execute wishlist command. Starting prompt.
+    :param message:
+    :return: None
+    """
     if (
         not data.globals.users_dict[message.from_user.id]["message_id"] == 0
         and not bot.get_state(message.from_user.id, message.chat.id) == States.wishlist
@@ -24,17 +30,17 @@ def wishlist_command(message):
             reply_markup="",
         )
 
-    query = (
+    query: str = (
         f"SELECT {Favorite.user_favorite_city_name} "
         f"FROM {Favorite.table_name} "
         f"WHERE {Favorite.favorite_user_id}="
         f"({User.get_user_id(message.from_user.id)})"
         f"ORDER BY {Favorite.user_favorite_city_name}"
     )
-    get_wishlist = read_data(query)
+    get_wishlist: list = read_data(query)
 
     if get_wishlist:
-        markup = types.InlineKeyboardMarkup()
+        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
         for loc in get_wishlist:
             markup.add(
                 types.InlineKeyboardButton(
@@ -42,14 +48,16 @@ def wishlist_command(message):
                 )
             )
         markup.add(inline_cancel_btn())
-        msg = bot.send_message(message.chat.id, "Your wishlist:", reply_markup=markup)
+        msg: Message = bot.send_message(
+            message.chat.id, "Your wishlist:", reply_markup=markup
+        )
         bot.set_state(message.from_user.id, States.wishlist, message.chat.id)
     else:
-        markup = types.InlineKeyboardMarkup()
-        add_location = inline_add_location_prompt_btn()
-        cancel = inline_cancel_btn()
-        add_city_menu = markup.row(add_location, cancel)
-        msg = bot.send_message(
+        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+        add_location: InlineKeyboardButton = inline_add_location_prompt_btn()
+        cancel: InlineKeyboardButton = inline_cancel_btn()
+        add_city_menu: InlineKeyboardMarkup = markup.row(add_location, cancel)
+        msg: Message = bot.send_message(
             message.chat.id, "Your wishlist is empty!", reply_markup=add_city_menu
         )
 

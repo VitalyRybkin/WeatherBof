@@ -1,4 +1,8 @@
 class Reply:
+    """
+    Class. Bot user reply library.
+    """
+
     def __init__(self, message):
         self.__hellos: list = [
             "Hi",

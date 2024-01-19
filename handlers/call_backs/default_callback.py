@@ -5,7 +5,7 @@ from loader import bot
 @bot.callback_query_handler(func=lambda call: call.data in ["Cancel", "Exit"])
 def cancel(call) -> None:
     """
-    Function. Cancelling current bot state.
+    Function. Cancelling or exiting current bot state.
     :param call:
     :return:
     """

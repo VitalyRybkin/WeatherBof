@@ -29,7 +29,7 @@ def clear_wishlist(call) -> None:
         message_id=data.globals.users_dict[call.from_user.id]["message_id"],
         reply_markup="",
     )
-    # bot.send_message(call.message.chat.id, "Your /wishlist is empty! /add location?")
+
     bot.send_message(
         call.message.chat.id, "\U00002705 Your wishlist is empty now! /add location ?"
     )
@@ -97,7 +97,12 @@ def remove_from_wishlist(call) -> None:
 
 
 @bot.callback_query_handler(func=lambda call: "Wishlist output" in call.data)
-def wishlist_loc_output(call):
+def wishlist_loc_output(call) -> None:
+    """
+    Function. Wishlist location display (call 'my' command).
+    :param call:
+    :return:
+    """
     States.my_prompt.user_id = call.from_user.id
     parse_callback = call.data.split("|")
     States.my_prompt.city = parse_callback[1]

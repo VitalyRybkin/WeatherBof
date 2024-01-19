@@ -3,7 +3,11 @@ import logging
 from loader import bot
 
 
-def admin_notify():
+def admin_notify() -> None:
+    """
+    Function. Admin notifications.
+    :return: None
+    """
     for admin in admins:
         try:
             bot.send_message(admin, text="Bot has started!")
