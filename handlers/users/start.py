@@ -99,11 +99,16 @@ def start_command(message) -> None:
 
             msg: Message = bot.send_message(
                 chat_id,
-                "You haven't /set your favorite city, yet!",
+                "You haven't /set your favorite location, yet!",
                 reply_markup=set_city_keyboard,
             )
             data.globals.users_dict[user_id]["message_id"] = msg.message_id
         else:
+            bot.send_message(
+                chat_id,
+                f"Your favorite location - <b>{get_user_info[0][1]}</b>",
+                parse_mode="HTML"
+            )
             keyboards: ReplyKeyboardMarkup = reply_bottom_menu_kb(message.from_user.id)
             bot.send_message(
                 chat_id,

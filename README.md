@@ -44,48 +44,49 @@ If wishlist is empty or user city is not specified corresponding message will be
 ***Returned user:***
 
 - welcome back message;
-- short description of bot functionality;
-- reminder of "your favorite city" and "your wishlist";
-- help message.
+- reminder "your favorite location - ...".
 
 ***Current user:***
 
-- reminder of "your favorite city" and "your wishlist";
+- help message.
 
-> #### 2.  /my - your city weather forecast
+> #### 2.  /my - user location weather forecast
+Display user's favorite location forecast. Message with inline keyboard - current, hourly or daily forecast. 
+Next step message with inline keyboard - number of hours (1-12) or days (1-3) forecast.
 
-Output user's city forecast. Reply menu with a forecast durations followed by forecast output based on user's choice.
+> #### 3. /onetouch - display weather upon user's default settings
+Display current weather (if 'on'), hourly forecast - 1 to 12 hours, daily forecast - 1 to 3 days.
 
-> #### 3. /del - delete your city
+> #### 4. /default - default settings for 'onetouch' output
+Setting current weather output (on/off), duration for hour and day forecast.
 
-Delete user's favorite city from database. Pre-deleting prompt message required - `Add`, `Cancel`.
+> #### 5. /set - set/reset user's favorite location
+Setting new or reset current user's favorite location.
 
-> #### 4. /change - change your favorite city
+> #### 6. /wishlist - wishlist output
+Show user's wishlist of favorite locations list as reply menu. Following forecast is shown after corresponding 
+reply button press by user (see /my command execution).
 
-Changing user's favorite city by asking user to type a new place followed by confirmation to make changes - `Change`, `Cancel`.
+> #### 7. /change - changing wishlist
+Removing locations out of wishlist.
 
-> #### 5. /wishlist - wishlist output
+> #### 8. /add - add location to a wishlist
+Adding new location to a user's wishlist by typing the name followed by confirmation - `Add`, `Cancel`.
 
-Show user's wishlist of favorite places as reply menu. Following forecast is shown after corresponding reply button press by user.
+> #### 9. /empty - clear wishlist
+Clear user's wishlist.
 
-> #### 6. /add - add place to a wishlist
-        
-Adding new place to a user's wishlist by typing the name followed by confirmation - `Add`, `Cancel`.
+> #### 10. /prefs - user preferences
+Setting advanced weather output - additional weather information for wind^ humidity and so on.
 
-> #### 7. /empty - clear your wishlist
+> #### 11. /userconfig - user preferences
+Setting units, bottom menu display.
 
-Clear user's wishlist.  Pre-deleting prompt message required - `Clear`, `Cancel`.
+> #### 12. /help - start helping me
+Help message output.
 
-> #### 8. /remove - remove city from your wishlist
+## Database ER-diagram.
+![title](users.db.png)
 
-Show user's wishlist as a reply menu. Pre-deleting message as reply to a message with an inline menu - `Delete`, `Cancel`.
-
-> #### 9. /help - start helping me
-
-Help output.
-
-## Possible features.
-
-- Celsius / Fahrenheit output;
-- forecast output settings - varius detail and visualisation options (sets of options);
-- auto messaging of current day weather at scheduled time.
+## State machine diagram.
+![title](UML.png)
