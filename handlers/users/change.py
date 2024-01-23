@@ -21,17 +21,6 @@ def get_wishlist(message) -> None:
     :return:
     """
 
-    if (
-        not data.globals.users_dict[message.from_user.id]["message_id"] == 0
-        and not bot.get_state(message.from_user.id, message.chat.id)
-        == States.change_wishlist
-    ):
-        bot.edit_message_reply_markup(
-            message.chat.id,
-            message_id=data.globals.users_dict[message.from_user.id]["message_id"],
-            reply_markup="",
-        )
-
     query = (
         f"SELECT {Favorite.user_favorite_city_name} "
         f"FROM {Favorite.table_name} "
@@ -72,4 +61,3 @@ def get_wishlist(message) -> None:
         )
 
     data.globals.users_dict[message.from_user.id]["message_id"] = msg.message_id
-    print("change : ", bot.get_state(message.from_user.id, message.chat.id))

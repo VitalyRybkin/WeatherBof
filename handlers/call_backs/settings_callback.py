@@ -4,6 +4,7 @@ from handlers.users.preferences import (
     customize_daily_setting,
     customize_hourly_setting,
     change_settings,
+    create_output_msg,
 )
 from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
@@ -18,7 +19,7 @@ from states.bot_states import States
 )
 def user_settings_prompt(call) -> None:
     """
-    Function. Change state, display user settings, call next step.
+    Function. Display user settings and change state upon user's choice.
     :param call:
     :return: None
     """
@@ -44,7 +45,6 @@ def user_settings_prompt(call) -> None:
                 f"SELECT {Current.humidity}, {Current.pressure}, {Current.visibility}, {Current.wind_extended} "
                 f"FROM {Current.table_name} "
                 f"WHERE {Current.current_weather_user_id}="
-                # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
                 f"({User.get_user_id(call.from_user.id)})"
             )
             States.customize_current.settings_dict = read_data_row(query)
@@ -72,7 +72,6 @@ def user_settings_prompt(call) -> None:
                 f"SELECT {Daily.humidity}, {Daily.visibility}, {Daily.astro} "
                 f"FROM {Daily.table_name} "
                 f"WHERE {Daily.daily_weather_user_id}="
-                # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
                 f"({User.get_user_id(call.from_user.id)})"
             )
             States.customize_daily.settings_dict = read_data_row(query)
@@ -99,7 +98,6 @@ def user_settings_prompt(call) -> None:
                 f"SELECT {Hourly.humidity}, {Hourly.pressure}, {Hourly.visibility}, {Hourly.wind_extended} "
                 f"FROM {Hourly.table_name} "
                 f"WHERE {Hourly.hourly_weather_user_id}="
-                # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
                 f"({User.get_user_id(call.from_user.id)})"
             )
             States.customize_hourly.settings_dict = read_data_row(query)
@@ -165,32 +163,37 @@ def save_settings(call) -> None:
     """
     parse_call_data = call.data.split("|")
     table_name = fields = condition = msg_text = ""
+    settings: str = "\U0001F4C3  <b>New settings:</b>\n"
     match parse_call_data[1]:
         case Current.table_name:
             table_name = Current.table_name
-            # condition = Current.table_name + '_user_id'
             condition = Current.current_weather_user_id
             for k, v in States.customize_current.settings_dict[0].items():
                 fields += k + f"={v}, "
+            msg_text = create_output_msg(
+                States.customize_current.settings_dict, settings
+            )
         case Hourly.table_name:
             table_name = Hourly.table_name
-            # condition = Hourly.table_name + '_user_id'
             condition = Hourly.hourly_weather_user_id
             for k, v in States.customize_hourly.settings_dict[0].items():
                 fields += k + f"={v}, "
+            msg_text = create_output_msg(
+                States.customize_hourly.settings_dict, settings
+            )
         case Daily.table_name:
             table_name = Daily.table_name
-            # condition = Daily.table_name + '_user_id'
             condition = Daily.daily_weather_user_id
             for k, v in States.customize_daily.settings_dict[0].items():
                 fields += k + f"={v}, "
+            msg_text = create_output_msg(States.customize_daily.settings_dict, settings)
         case User.table_name:
             table_name = User.table_name
             condition = User.user_id
-            for k, v in States.user_config_setting.settings_dict.items():
+            for k, v in States.user_config_prompt.settings_dict.items():
                 v = v if isinstance(v, int) else f"'{v}'"
                 fields += k + f"={v}, "
-            if States.user_config_setting.settings_dict["reply_menu"] == 1:
+            if States.user_config_prompt.settings_dict["reply_menu"] == 1:
                 msg_text = "You can hide your bottom menu here /userconfig !"
             else:
                 msg_text = "You can pop up your bottom menu here /userconfig !:"
@@ -200,12 +203,19 @@ def save_settings(call) -> None:
             for k, v in States.default_setting.settings_dict.items():
                 v = v if isinstance(v, int) else f"'{v}'"
                 fields += k + f"={v}, "
+            msg_text = (
+                f"<b>'ONETOUCH' settings:</b>\n"
+                f"Current weather: "
+                f'{"yes" if States.default_setting.settings_dict["current_weather"] else "no"}\n'
+                f"Hourly weather: {States.default_setting.settings_dict['hourly_weather']}-hour forecast\n"
+                f"Daily weather: {States.default_setting.settings_dict['daily_weather']}-day forecast\n"
+            )
+
     fields = fields[:-2]
     query = (
         f"UPDATE {table_name} "
         f"SET {fields} "
         f"WHERE {condition}="
-        # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
         f"({User.get_user_id(call.from_user.id)})"
     )
 
@@ -216,7 +226,5 @@ def save_settings(call) -> None:
     if msg_text:
         keyboards = reply_bottom_menu_kb(call.from_user.id)
         bot.send_message(
-            call.message.chat.id,
-            msg_text,
-            reply_markup=keyboards,
+            call.message.chat.id, msg_text, reply_markup=keyboards, parse_mode="HTML"
         )

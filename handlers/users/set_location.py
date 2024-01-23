@@ -19,6 +19,7 @@ from midwares.api_conn_center import get_current_weather
 from midwares.db_conn_center import read_data
 from midwares.sql_lib import User
 from states.bot_states import States
+from utils.global_functions import delete_msg
 
 
 @bot.message_handler(commands=["set"])
@@ -32,15 +33,15 @@ def set_city_prompt(message) -> None:
     user_id: int = message.from_user.id
     chat_id: int = message.chat.id
 
-    if (
-        not data.globals.users_dict[user_id]["message_id"] == 0
-        and not bot.get_state(user_id, chat_id) == States.set_location
-    ):
-        bot.edit_message_reply_markup(
-            message.chat.id,
-            message_id=data.globals.users_dict[user_id]["message_id"],
-            reply_markup="",
-        )
+    # if (
+    #     not data.globals.users_dict[user_id]["message_id"] == 0
+    #     and not bot.get_state(user_id, chat_id) == States.set_location
+    # ):
+    #     bot.edit_message_reply_markup(
+    #         message.chat.id,
+    #         message_id=data.globals.users_dict[user_id]["message_id"],
+    #         reply_markup="",
+    #     )
 
     query: str = (
         f"SELECT {User.user_city} "
@@ -76,12 +77,15 @@ def set_city_prompt(message) -> None:
 @bot.message_handler(state=States.search_location)
 def search_location(message) -> None:
     """
-    Function. Setting users favorite city.
-    :return:
+    Function. API search for users favorite city.
+    :return: None
     """
 
     chat_id: int = message.chat.id
     user_id: int = message.from_user.id
+
+    if not data.globals.users_dict[user_id]["message_id"] == 0:
+        delete_msg(chat_id, user_id)
 
     bot_answer_formatting: list = [
         _.lower().capitalize() for _ in re.split("\\s+|-", message.text.strip())
@@ -92,11 +96,7 @@ def search_location(message) -> None:
 
     if "error" in response.json().keys() and response.json()["error"]["code"] == 1006:
         bot.send_message(chat_id, response.json()["error"]["message"])
-        markup = types.InlineKeyboardMarkup()
-        cancel_keyboard = markup.row(inline_cancel_btn())
-        msg = bot.send_message(
-            chat_id, "\U0001F524 Type in location name:", reply_markup=cancel_keyboard
-        )
+        msg = type_location(chat_id)
     else:
         markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
         set_location_keyboard: InlineKeyboardMarkup | None = None
@@ -129,9 +129,21 @@ def search_location(message) -> None:
             f"{'country:':<10} {response.json()['location']['country']}",
             reply_markup=set_location_keyboard,
         )
-    bot.edit_message_reply_markup(
-        message.chat.id,
-        message_id=data.globals.users_dict[user_id]["message_id"],
-        reply_markup="",
-    )
+
     data.globals.users_dict[user_id]["message_id"] = msg.message_id
+
+
+def type_location(chat_id: int) -> Message:
+    """
+    Function. Type location message.
+    :param chat_id:
+    :return: Message
+    """
+    markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+    cancel_keyboard: InlineKeyboardMarkup = markup.row(inline_cancel_btn())
+    msg: Message = bot.send_message(
+        chat_id,
+        "\U0001F524 Type in location name:",
+        reply_markup=cancel_keyboard,
+    )
+    return msg

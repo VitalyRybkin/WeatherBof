@@ -13,8 +13,8 @@ from utils.global_functions import delete_msg
 
 
 @bot.message_handler(commands=["userconfig"])
-@bot.message_handler(state=States.user_config_setting)
-def user_config_prompt(message) -> None:
+@bot.message_handler(state=States.user_config_prompt)
+def user_configuration_prompt(message) -> None:
     """
     Function. Execute userconfig command. Userconfig starting message.
     :param message:
@@ -23,21 +23,11 @@ def user_config_prompt(message) -> None:
     user_id: int = message.from_user.id
     chat_id: int = message.chat.id
 
-    # if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0
-    #         and not bot.get_state(message.from_user.id, message.chat.id) == States.user_config):
-    #     bot.edit_message_reply_markup(
-    #         message.chat.id,
-    #         message_id=data.globals.users_dict[message.from_user.id]['message_id'],
-    #         reply_markup="")
+    bot.set_state(message.from_user.id, States.user_config_prompt, message.chat.id)
 
-    bot.set_state(message.from_user.id, States.user_config_setting, message.chat.id)
-
-    # query = (f"SELECT {User.metric}, {User.reply_menu} "
-    #          f"FROM {User.table_name} "
-    #          f"WHERE (({User.get_user_id(message.from_user.id)}))")
     query: str = User.get_user_config(user_id)
     get_users_settings: list = read_data_row(query)
-    States.user_config_setting.settings_dict = copy.deepcopy(get_users_settings[0])
+    States.user_config_prompt.settings_dict = copy.deepcopy(get_users_settings[0])
 
     settings_change_output(chat_id, message, user_id)
 
@@ -64,8 +54,8 @@ def settings_change_output(chat_id, message, user_id) -> None:
     :return: None
     """
     markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
-    metric: str = f"UNITS: {States.user_config_setting.settings_dict['metric']}"
-    reply_menu: str = f'BOTTOM MENU: {"yes" if States.user_config_setting.settings_dict["reply_menu"] else "no"}'
+    metric: str = f"UNITS: {States.user_config_prompt.settings_dict['metric']}"
+    reply_menu: str = f'BOTTOM MENU: {"yes" if States.user_config_prompt.settings_dict["reply_menu"] else "no"}'
     markup.add(types.InlineKeyboardButton(metric, callback_data="metric"))
     markup.add(types.InlineKeyboardButton(reply_menu, callback_data="reply_menu"))
     markup.add(inline_save_settings_btn(User.table_name))

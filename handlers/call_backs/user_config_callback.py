@@ -1,4 +1,4 @@
-from handlers.users.user_config import user_config_prompt, configuring_settings
+from handlers.users.user_config import configuring_settings
 from loader import bot
 from states.bot_states import States
 
@@ -12,10 +12,10 @@ def set_metric(call) -> None:
     """
     States.config_settings.user_id = call.from_user.id
     bot.set_state(call.from_user.id, States.config_settings, call.message.chat.id)
-    if States.user_config_setting.settings_dict["metric"] == "metric":
-        States.user_config_setting.settings_dict["metric"] = "american"
+    if States.user_config_prompt.settings_dict["metric"] == "metric":
+        States.user_config_prompt.settings_dict["metric"] = "american"
     else:
-        States.user_config_setting.settings_dict["metric"] = "metric"
+        States.user_config_prompt.settings_dict["metric"] = "metric"
     configuring_settings(call.message)
 
 
@@ -28,8 +28,8 @@ def set_reply_menu(call) -> None:
     """
     States.config_settings.user_id = call.from_user.id
     bot.set_state(call.from_user.id, States.config_settings, call.message.chat.id)
-    if States.user_config_setting.settings_dict["reply_menu"]:
-        States.user_config_setting.settings_dict["reply_menu"] = 0
+    if States.user_config_prompt.settings_dict["reply_menu"]:
+        States.user_config_prompt.settings_dict["reply_menu"] = 0
     else:
-        States.user_config_setting.settings_dict["reply_menu"] = 1
+        States.user_config_prompt.settings_dict["reply_menu"] = 1
     configuring_settings(call.message)

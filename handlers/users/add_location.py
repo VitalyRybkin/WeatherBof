@@ -1,4 +1,5 @@
 from telebot import types
+from telebot.types import InlineKeyboardMarkup, Message
 
 import data.globals
 from keyboards.inline.inline_buttons import (
@@ -6,9 +7,8 @@ from keyboards.inline.inline_buttons import (
     inline_add_location_prompt_btn,
 )
 from loader import bot
-from midwares.db_conn_center import write_data, read_data
-from midwares.sql_lib import User, Favorite
 from states.bot_states import States
+from utils.global_functions import delete_msg
 
 
 @bot.message_handler(commands=["add"])
@@ -17,14 +17,17 @@ def add_wishlist_location(message) -> None:
     """
     Function. Executes add command. Add location to wishlist prompt. Setting add_location state.
     :param message:
-    :return:
+    :return: None
     """
+    if not data.globals.users_dict[message.from_user.id]["message_id"] == 0:
+        delete_msg(message.chat.id, message.from_user.id)
 
-    markup = types.InlineKeyboardMarkup()
+    markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
     add_location_keyboard = markup.row(
         inline_add_location_prompt_btn(), inline_cancel_btn()
     )
-    msg = bot.send_message(
+
+    msg: Message = bot.send_message(
         message.chat.id,
         "Add location to your wishlist?",
         reply_markup=add_location_keyboard,

@@ -5,9 +5,10 @@ from handlers.users.my import my_prompt_msg
 from keyboards.inline.inline_buttons import inline_set_wishlist_btn, inline_cancel_btn
 from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
-from midwares.db_conn_center import write_data
+from midwares.db_conn_center import write_data, read_data
 from midwares.sql_lib import Favorite, User
 from states.bot_states import States
+from utils.global_functions import delete_msg
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "Clear wishlist")
@@ -20,7 +21,6 @@ def clear_wishlist(call) -> None:
     query = (
         f"DELETE FROM {Favorite.table_name} "
         f"WHERE {Favorite.favorite_user_id}="
-        # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
         f"({User.get_user_id(call.from_user.id)})"
     )
     write_data(query)
@@ -53,21 +53,32 @@ def change_wishlist(call) -> None:
     """
     for loc, isSet in States.change_wishlist.wishlist.items():
         if not isSet:
-            query = (
+            query: str = (
                 f"DELETE FROM {Favorite.table_name} "
                 f"WHERE {Favorite.user_favorite_city_name}='{loc}' "
                 f"AND {Favorite.favorite_user_id}="
-                # f"(SELECT {Users.id} FROM {Users.table_name} WHERE {Users.user_id}={call.from_user.id})"
                 f"({User.get_user_id(call.from_user.id)})"
             )
             write_data(query)
+
     bot.delete_state(call.from_user.id, call.message.chat.id)
-    bot.edit_message_reply_markup(
-        call.message.chat.id,
-        message_id=data.globals.users_dict[call.from_user.id]["message_id"],
-        reply_markup="",
+    delete_msg(call.message.chat.id, call.from_user.id)
+
+    query: str = (
+        f"SELECT {Favorite.user_favorite_city_name} "
+        f"FROM {Favorite.table_name} "
+        f"WHERE {Favorite.favorite_user_id}="
+        f"({User.get_user_id(call.from_user.id)})"
     )
-    bot.send_message(call.message.chat.id, "New /wishlist was set!")
+
+    get_user_wishlist = read_data(query)
+
+    if not get_user_wishlist:
+        bot.send_message(
+            call.message.chat.id, "Your wishlist is empty now! /add location!"
+        )
+    else:
+        bot.send_message(call.message.chat.id, "New /wishlist was set!")
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
 
 
@@ -107,4 +118,3 @@ def wishlist_loc_output(call) -> None:
     parse_callback = call.data.split("|")
     States.my_prompt.city = parse_callback[1]
     my_prompt_msg(call.message)
-    # bot.register_message_handler(callable(my_prompt_msg))

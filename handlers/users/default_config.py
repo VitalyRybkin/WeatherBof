@@ -26,9 +26,9 @@ def default_settings_prompt(message) -> None:
 
     bot.set_state(user_id, States.default_config_prompt, chat_id)
 
-    query = Default.get_default_settings(f"({User.get_user_id(user_id)})")
+    query: str = Default.get_default_settings(f"({User.get_user_id(user_id)})")
 
-    get_default_settings = read_data_row(query)
+    get_default_settings: list = read_data_row(query)
     States.default_setting.settings_dict = copy.deepcopy(get_default_settings[0])
     settings_change_output(chat_id, message, user_id)
 

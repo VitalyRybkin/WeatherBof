@@ -24,16 +24,6 @@ def preferences_prompt(message) -> None:
     :param message:
     :return: None
     """
-    if (
-        not data.globals.users_dict[message.from_user.id]["message_id"] == 0
-        and not bot.get_state(message.from_user.id, message.chat.id)
-        == States.customize_prompt
-    ):
-        bot.edit_message_reply_markup(
-            message.chat.id,
-            message_id=data.globals.users_dict[message.from_user.id]["message_id"],
-            reply_markup="",
-        )
 
     bot.set_state(message.from_user.id, States.customize_prompt, message.chat.id)
 
@@ -144,10 +134,10 @@ def change_settings(message) -> None:
 
 
 def settings_change_output(
-    user_id: int, chat_id: int, user_settings_dict: dict, setting: str
+    user_id: int, chat_id: int, user_settings_dict: list, setting: str
 ) -> None:
     """
-    Function. Display user settings.
+    Function. Display user settings message.
     :param user_id:
     :param chat_id:
     :param user_settings_dict: user setting dict
@@ -169,12 +159,12 @@ def settings_change_output(
     data.globals.users_dict[user_id]["message_id"] = msg.message_id
 
 
-def create_output_msg(user_settings, settings) -> str:
+def create_output_msg(user_settings: list, settings: str) -> str:
     """
     Function. User settings msg string.
     :param user_settings:
     :param settings:
-    :return:
+    :return: None
     """
     for row in user_settings:
         for k, v in row.items():

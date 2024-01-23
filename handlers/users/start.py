@@ -1,5 +1,10 @@
 from telebot import types
-from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import (
+    Message,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    ReplyKeyboardMarkup,
+)
 
 from keyboards.inline.inline_buttons import (
     inline_cancel_btn,
@@ -10,14 +15,16 @@ from loader import bot
 from midwares.db_conn_center import read_data, write_data
 from midwares.sql_lib import User, Current, Daily, Hourly, Default
 from states.bot_states import States
+from utils.global_functions import delete_msg
 from utils.reply_center import Reply
 import data.globals
 
 
 @bot.message_handler(commands=["start"])
+@bot.message_handler(state=States.start)
 def start_command(message) -> None:
     """
-    Function. Bot start workout. Check if user is new or old user back. Executes 'start' command. Writes settings in db.
+    Function. Execute start command. Check if user is new or old user back. Executes 'start' command. Writes settings in db.
     :param message:
     :return: None
     """
@@ -63,10 +70,7 @@ def start_command(message) -> None:
             data.globals.users_dict.setdefault(user_id, dict())
             data.globals.users_dict[user_id]["count_not_defined"] = 0
             data.globals.users_dict[user_id]["message_id"] = 0
-            # data.globals.users_dict[user_id]['user_id'] = user_id
             data.globals.users_dict[user_id]["chat_id"] = chat_id
-            # data.globals.users_dict[user_id]['state'] = None
-            # data.globals.users_dict[user_id]['city'] = None
             # TODO delete/edit messages
 
         if bot.get_state(user_id, chat_id):
@@ -82,13 +86,17 @@ def start_command(message) -> None:
             f"Hello, {message.from_user.first_name}!\n" f"Welcome back!",
         )
 
-        bot.set_state(user_id, States.start, chat_id)
-
         if get_user_info[0][1] is None:
+            bot.set_state(user_id, States.start, chat_id)
+
             markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
             cancel: InlineKeyboardButton = inline_cancel_btn()
             set_city: InlineKeyboardButton = inline_set_location_prompt_btn()
             set_city_keyboard: InlineKeyboardMarkup = markup.add(set_city, cancel)
+
+            if not data.globals.users_dict[user_id]["message_id"] == 0:
+                delete_msg(chat_id, user_id)
+
             msg: Message = bot.send_message(
                 chat_id,
                 "You haven't /set your favorite city, yet!",
@@ -96,13 +104,7 @@ def start_command(message) -> None:
             )
             data.globals.users_dict[user_id]["message_id"] = msg.message_id
         else:
-            # check_weather_keyboard = show_weather()
-            # msg = bot.send_message(
-            #     chat_id,
-            #     f"\U0001F3D9 Your favorite city: \n{get_user_info[0][1]}",
-            #     reply_markup=check_weather_keyboard,
-            # )
-            keyboards: InlineKeyboardMarkup = reply_bottom_menu_kb(message.from_user.id)
+            keyboards: ReplyKeyboardMarkup = reply_bottom_menu_kb(message.from_user.id)
             bot.send_message(
                 chat_id,
                 "You can hide bottom menu here /userconfig !",
