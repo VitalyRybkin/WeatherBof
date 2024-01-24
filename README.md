@@ -20,15 +20,17 @@ If wishlist is empty or user city is not specified corresponding message will be
 
 ## Main menu.
 
-- /start - start weather forecasting
-- /my - your city weather forecast
-- /del - delete your city
-- /change - change your city
-- /wishlist - wishlist output
-- /add - add place to a wish list
-- /empty - clear your wishlist
-- /remove - remove city from your wishlist
-- /help - start helping me
+- /my - user's favorite location forecast
+- /onetouch - user's favorite location display upon default settings
+- /default - default settings for 'onetouch' output
+- /set - set/reset user's favorite location
+- /wishlist - list of user's locations
+- /change - update wishlist
+- /add - add location to a wishlist
+- /empty - clear wishlist
+- /prefs - weather display user settings
+- /userconfig - units and menu settings
+- /help - display help
 
 ## Command description and execution.
 
