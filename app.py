@@ -6,14 +6,10 @@ import signal
 import sqlite3
 
 from telebot import custom_filters
-from telebot.handler_backends import StatesGroup
 
 from loader import bot
 import handlers
-from midwares.db_conn_center import read_data_row
-from midwares.sql_lib import User
-from states.bot_states import States
-from utils.notifications import admin_notify
+from utils.notifications import admin_notify, stopped
 from utils.bot_commands import set_menu_commands
 from data import config
 import os
@@ -51,6 +47,7 @@ if __name__ == "__main__":
         # with open('./data/settings.pkl', 'wb') as file:
         #     print("Signal Number:", signum, " Frame: ", frame)
         #     pickle.dump(data.globals.users_dict, file)
+        stopped()
         with open("./data/user_dict.json", "w") as write_dict:
             json.dump(data.globals.users_dict, write_dict, indent=4)
             print("Signal Number:", signum, " Frame: ", frame)
