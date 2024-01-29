@@ -30,19 +30,20 @@ def my(message) -> None:
     #                                   data.globals.users_dict[message.from_user.id]['message_id'],
     #                                   reply_markup="")
 
-    query: str = (
-        f"SELECT {User.user_city} "
-        f"FROM {User.table_name} "
-        f"WHERE {User.bot_user}={message.from_user.id}"
-    )
+    # query: str = (
+    #     f"SELECT {User.name} "
+    #     f"FROM {User.table_name} "
+    #     f"WHERE {User.bot_user_id}={message.from_user.id}"
+    # )
 
-    get_users_location = read_data_row(query)
+    get_users_location = read_data_row(User.get_user_location_info(bot_user_id=message.from_user.id))
 
-    if get_users_location[0]["user_city"] is None:
+    if get_users_location[0]["name"] is None:
         bot.send_message(chat_id, "You haven't /set your favorite location yet!")
     else:
         States.my_prompt.user_id = message.from_user.id
-        States.my_prompt.city = get_users_location[0]["user_city"]
+        States.my_prompt.loc_name = get_users_location[0]["name"]
+        States.my_prompt.loc_id = get_users_location[0]["id"]
         my_prompt_msg(message)
 
 
@@ -66,7 +67,7 @@ def my_prompt_msg(message) -> None:
     delete_msg(chat_id, user_id)
     msg: Message = bot.send_message(
         message.chat.id,
-        f"Display weather at - <b>{States.my_prompt.city}</b>",
+        f"Display weather at - <b>{States.my_prompt.loc_name}</b>",
         reply_markup=markup,
         parse_mode="HTML",
     )
@@ -104,7 +105,7 @@ def weather_output_hourly(message) -> None:
     delete_msg(chat_id, user_id)
     msg: Message = bot.send_message(
         chat_id,
-        f"Tap to show weather at - <b>{States.my_prompt.city}</b>",
+        f"Tap to show weather at - <b>{States.my_prompt.loc_name}</b>",
         reply_markup=weather_keyboard,
         parse_mode="HTML",
     )

@@ -29,9 +29,9 @@ def inline_set_location_prompt_btn():
     )
 
 
-def inline_set_location_btn(to_where, location):
+def inline_set_location_btn(to_where: str, loc_id: str):
     return types.InlineKeyboardButton(
-        ButtonSigns.set_favorite_location, callback_data=f"Add|{to_where}|{location}"
+        ButtonSigns.set_favorite_location, callback_data=f"Add|{to_where}|{loc_id}"
     )
 
 
@@ -41,9 +41,9 @@ def inline_add_location_prompt_btn():
     )
 
 
-def inline_add_location_btn(to_where, location):
+def inline_add_location_btn(to_where: str, loc_id: str):
     return types.InlineKeyboardButton(
-        ButtonSigns.add_wishlist_location, callback_data=f"Add|{to_where}|{location}"
+        ButtonSigns.add_wishlist_location, callback_data=f"Add|{to_where}|{loc_id}"
     )
 
 
@@ -59,9 +59,9 @@ def inline_change_location_prompt_btn():
     )
 
 
-def inline_change_location_btn(to_where, location):
+def inline_change_location_btn(to_where: str, loc_id: str):
     return types.InlineKeyboardButton(
-        ButtonSigns.change_favorite_location, callback_data=f"Add|{to_where}|{location}"
+        ButtonSigns.change_favorite_location, callback_data=f"Add|{to_where}|{loc_id}"
     )
 
 

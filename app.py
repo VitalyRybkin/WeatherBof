@@ -65,22 +65,13 @@ if __name__ == "__main__":
         new_dict = {}
         for k, v in json_dict.items():
             new_dict[int(k)] = v
-            # if v['state'] is None and not v['message_id'] == 0:
             if not v['message_id'] == 0:
                 bot.delete_message(v['chat_id'], v['message_id'])
                 v['message_id'] = 0
-        # bot.set_state(v['user_id'], v['state'], v['chat_id'])
-        # for atr in vars(States):
-        #     if not atr.startswith('_'):
-        #         atr = getattr(States, atr)
-        #         atr.user_id = v['user_id']
-        #
-        # # query = (f"SELECT {User.user_city} "
-        # #          f"FROM {User.table_name} "
-        # #          f"WHERE {User.bot_user}={v['user_id']}")
-        # #
-        # # get_users_location = read_data_row(query)
-        # # atr.city = get_users_location[0]['user_city']
+            if v['message_list']:
+                for msg in v['message_list']:
+                    bot.delete_message(v['chat_id'], msg)
+                v['message_list'].clear()
         data.globals.users_dict = copy.deepcopy(new_dict)
 
     if not os.path.exists(f'./data/{DATABASE}'):

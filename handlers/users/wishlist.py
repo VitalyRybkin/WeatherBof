@@ -8,7 +8,7 @@ from keyboards.inline.inline_buttons import (
 )
 from loader import bot
 from midwares.db_conn_center import read_data
-from midwares.sql_lib import Favorite, User
+from midwares.sql_lib import Wishlist, User
 from states.bot_states import States
 from utils.global_functions import delete_msg
 
@@ -35,11 +35,11 @@ def wishlist_prompt(message) -> None:
         delete_msg(message.chat.id, message.from_user.id)
 
     query: str = (
-        f"SELECT {Favorite.user_favorite_city_name} "
-        f"FROM {Favorite.table_name} "
-        f"WHERE {Favorite.favorite_user_id}="
+        f"SELECT {Wishlist.name} "
+        f"FROM {Wishlist.table_name} "
+        f"WHERE {Wishlist.wishlist_user_id}="
         f"({User.get_user_id(message.from_user.id)})"
-        f"ORDER BY {Favorite.user_favorite_city_name}"
+        f"ORDER BY {Wishlist.name}"
     )
     get_wishlist: list = read_data(query)
 

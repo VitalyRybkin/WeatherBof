@@ -5,9 +5,9 @@ from handlers.users.set_location import type_location
 from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
 from midwares.db_conn_center import write_data, read_data
-from midwares.sql_lib import User, Favorite
+from midwares.sql_lib import User, Wishlist
 from states.bot_states import States
-from utils.global_functions import delete_msg
+from utils.global_functions import delete_msg, edit_reply_msg
 
 
 @bot.callback_query_handler(
@@ -25,8 +25,7 @@ def search_location_prompt(call) -> None:
 
     States.search_location.operation = call.data
 
-    if not data.globals.users_dict[call.from_user.id]["message_id"] == 0:
-        delete_msg(call.message.chat.id, call.from_user.id)
+    edit_reply_msg(call.message.chat.id, call.from_user.id)
 
     msg: Message = type_location(call.message.chat.id)
     data.globals.users_dict[call.from_user.id]["message_id"] = msg.message_id
@@ -40,43 +39,79 @@ def add_location_to_db(call) -> None:
     :return: None
     """
     parse_call_data = call.data.split("|")
+    loc_info = ""
 
     if parse_call_data[1] == "favorite":
         bot.send_message(call.message.chat.id, "\U00002705 Favorite location set!")
-        query: str = (
-            f"UPDATE {User.table_name} "
-            f"SET {User.user_city}='{parse_call_data[2]}' "
-            f"WHERE {User.bot_user}={call.from_user.id}"
-        )
-        write_data(query)
+        for row in States.search_location.loc_dict:
+            if row["id"] == int(parse_call_data[2]):
+                query: str = (
+                    f"UPDATE {User.table_name} "
+                    f"SET {User.id}={row['id']}, "
+                    f"{User.name}='{row['name']}', "
+                    f"{User.region}='{row['region']}', "
+                    f"{User.country}='{row['country']}' "
+                    f"WHERE {User.bot_user_id}={call.from_user.id}"
+                )
+
+                loc_info = (
+                    f"<b>Location info:</b>\n"
+                    f"{'name:':<10} {row['name']}\n"
+                    f"{'region:':<10}  {row['region']}\n"
+                    f"{'country:':<10} {row['country']}"
+                )
+                write_data(query)
+                break
 
     elif parse_call_data[1] == "wishlist":
-        query = (
-            f"SELECT {Favorite.user_favorite_city_name} "
-            f"FROM {Favorite.table_name} "
-            f"WHERE {Favorite.favorite_user_id}="
-            f"({User.get_user_id(call.from_user.id)}) "
-            f"AND {Favorite.user_favorite_city_name}='{parse_call_data[2]}'"
+        # query = (
+        #     f"SELECT {Wishlist.name} "
+        #     f"FROM {Wishlist.table_name} "
+        #     f"WHERE {Wishlist.wishlist_user_id}="
+        #     f"({User.get_user_id(call.from_user.id)}) "
+        #     f"AND {Wishlist.name}='{parse_call_data[2]}'"
+        # )
+        get_wishlist_info = read_data(
+            Wishlist.get_wishlist_loc(
+                user_id=call.from_user.id, loc_id=int(parse_call_data[2])
+            )
         )
-        get_wishlist_info = read_data(query)
 
         if not get_wishlist_info:
             bot.send_message(
                 call.message.chat.id, "\U00002705 Location added to wishlist!"
             )
+            for row in States.search_location.loc_dict:
+                if row["id"] == int(parse_call_data[2]):
+                    query = (
+                        f"INSERT INTO {Wishlist.table_name} "
+                        f"({Wishlist.wishlist_user_id}, "
+                        f"{Wishlist.id}, "
+                        f"{Wishlist.name}, "
+                        f"{Wishlist.region}, "
+                        f"{Wishlist.country})"
+                        f"VALUES (({User.get_user_id(call.from_user.id)}), "
+                        f"{row['id']}, "
+                        f"'{row['name']}', "
+                        f"'{row['region']}', "
+                        f"'{row['country']}')"
+                    )
+
+                    write_data(query)
+
+                    loc_info = (
+                        f"<b>Location added to wishlist:</b>\n"
+                        f"{'name:':<10} {row['name']}\n"
+                        f"{'region:':<10}  {row['region']}\n"
+                        f"{'country:':<10} {row['country']}"
+                    )
+                    break
 
             query = (
-                f"INSERT INTO {Favorite.table_name} "
-                f"({Favorite.favorite_user_id}, {Favorite.user_favorite_city_name}) "
-                f"VALUES (({User.get_user_id(call.from_user.id)}), '{parse_call_data[2]}')"
-            )
-            write_data(query)
-
-            query = (
-                f"SELECT {User.user_city} "
+                f"SELECT {User.id} "
                 f"FROM {User.table_name} "
-                f"WHERE {User.bot_user}={call.from_user.id} "
-                f"AND {User.user_city}='{parse_call_data[2]}'"
+                f"WHERE {User.bot_user_id}={call.from_user.id} "
+                f"AND {User.id}='{int(parse_call_data[2])}'"
             )
             get_favorite_location = read_data(query)
 
@@ -93,12 +128,16 @@ def add_location_to_db(call) -> None:
             data.globals.users_dict[call.from_user.id]["message_id"] = msg.message_id
             return
 
+    bot.send_message(call.message.chat.id, loc_info, parse_mode="HTML")
+
     bot.edit_message_reply_markup(
         call.message.chat.id,
         message_id=data.globals.users_dict[call.from_user.id]["message_id"],
         reply_markup="",
     )
-    # bot.delete_state(call.from_user.id, call.message.chat.id)
+
+    delete_msg(call.message.chat.id, call.from_user.id)
+
     bot.delete_state(call.from_user.id, call.message.chat.id)
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
 

@@ -8,32 +8,55 @@ class User:
     """
 
     table_name: str = "bot_user"
-    user_id: str = "user_id"
-    bot_user: str = "bot_user"
-    user_city: str = "user_city"
+    user_id: str = "user_id"  # TODO change to city_id
+    bot_user_id: str = "bot_user_id"
+    id: str = "id"
+    name: str = "name"
+    region: str = "region"
+    country: str = "country"
     metric: str = "metric"
     reply_menu: str = "reply_menu"
 
     @classmethod
     def get_user_id(cls, *args) -> str:
         return (
-            f"SELECT {cls.user_id} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
+            f"SELECT {cls.user_id} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.bot_user_id}={args[0]}"
         )
 
     @classmethod
     def get_user_config(cls, *args):
-        return f"SELECT {cls.metric}, {cls.reply_menu} FROM {cls.table_name} WHERE {cls.bot_user}={args[0]}"
+        return (f"SELECT {cls.metric}, {cls.reply_menu} "
+                f"FROM {cls.table_name} "
+                f"WHERE {cls.bot_user_id}={args[0]}")
+
+    @classmethod
+    def get_user_location_info(cls, **kwargs):
+        return (f"SELECT {cls.id}, {cls.name}, {cls.region}, {cls.country} "
+                f"FROM {cls.table_name} "
+                f"WHERE {cls.bot_user_id}={kwargs['bot_user_id']}")
 
 
 @dataclass(frozen=True)
-class Favorite:
+class Wishlist:
     """
     Class. Favorite table dataclass. User favorite locations wishlist.
     """
 
-    table_name: str = "favorite_city"
-    favorite_user_id: str = "favorite_user_id"
-    user_favorite_city_name: str = "user_favorite_city_name"
+    table_name: str = "wishlist"
+    wishlist_user_id: str = "wishlist_user_id"
+    id: str = "id"
+    name: str = "name"
+    region: str = "region"
+    country: str = "country"
+
+    @classmethod
+    def get_wishlist_loc(cls, **kwargs):
+        return (f"SELECT {cls.id}, {cls.name}, {cls.region}, {cls.country} "
+                f"FROM {cls.table_name} "
+                f"WHERE {cls.wishlist_user_id}=({User.get_user_id(kwargs['user_id'])}) "
+                f"AND {cls.id}={kwargs['loc_id']}")
 
 
 @dataclass(frozen=True)
@@ -48,6 +71,12 @@ class Current:
     pressure: str = "pressure"
     visibility: str = "visibility"
     humidity: str = "humidity"
+
+    @classmethod
+    def get_user_current_weather_settings(cls, **kwargs):
+        return (f"SELECT {cls.wind_extended}, {cls.pressure}, {cls.visibility}, {cls.humidity} "
+                f"FROM {cls.table_name} "
+                f"WHERE {cls.current_weather_user_id}=({User.get_user_id(kwargs['bot_user_id'])})")
 
 
 @dataclass(frozen=True)

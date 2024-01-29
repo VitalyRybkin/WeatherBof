@@ -6,7 +6,7 @@ from keyboards.inline.inline_buttons import inline_set_wishlist_btn, inline_canc
 from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
 from midwares.db_conn_center import write_data, read_data
-from midwares.sql_lib import Favorite, User
+from midwares.sql_lib import Wishlist, User
 from states.bot_states import States
 from utils.global_functions import delete_msg
 
@@ -19,8 +19,8 @@ def clear_wishlist(call) -> None:
     :return:
     """
     query = (
-        f"DELETE FROM {Favorite.table_name} "
-        f"WHERE {Favorite.favorite_user_id}="
+        f"DELETE FROM {Wishlist.table_name} "
+        f"WHERE {Wishlist.wishlist_user_id}="
         f"({User.get_user_id(call.from_user.id)})"
     )
     write_data(query)
@@ -54,9 +54,9 @@ def change_wishlist(call) -> None:
     for loc, isSet in States.change_wishlist.wishlist.items():
         if not isSet:
             query: str = (
-                f"DELETE FROM {Favorite.table_name} "
-                f"WHERE {Favorite.user_favorite_city_name}='{loc}' "
-                f"AND {Favorite.favorite_user_id}="
+                f"DELETE FROM {Wishlist.table_name} "
+                f"WHERE {Wishlist.name}='{loc}' "
+                f"AND {Wishlist.wishlist_user_id}="
                 f"({User.get_user_id(call.from_user.id)})"
             )
             write_data(query)
@@ -65,9 +65,9 @@ def change_wishlist(call) -> None:
     delete_msg(call.message.chat.id, call.from_user.id)
 
     query: str = (
-        f"SELECT {Favorite.user_favorite_city_name} "
-        f"FROM {Favorite.table_name} "
-        f"WHERE {Favorite.favorite_user_id}="
+        f"SELECT {Wishlist.name} "
+        f"FROM {Wishlist.table_name} "
+        f"WHERE {Wishlist.wishlist_user_id}="
         f"({User.get_user_id(call.from_user.id)})"
     )
 

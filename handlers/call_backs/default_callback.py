@@ -16,13 +16,15 @@ def cancel(call) -> None:
     elif call.data == "Exit":
         bot.send_message(call.message.chat.id, "\U00002B05 Exited!")
 
-    bot.edit_message_reply_markup(
-        call.message.chat.id,
-        message_id=data.globals.users_dict[call.from_user.id]["message_id"],
-        reply_markup="",
-    )
+    if not data.globals.users_dict[call.from_user.id]["message_id"] == 0:
+        bot.edit_message_reply_markup(
+            call.message.chat.id,
+            message_id=data.globals.users_dict[call.from_user.id]["message_id"],
+            reply_markup="",
+        )
+        data.globals.users_dict[call.from_user.id]["message_id"] = 0
 
-    data.globals.users_dict[call.from_user.id]["message_id"] = 0
-    data.globals.users_dict[call.from_user.id]["state"] = bot.get_state(
-        call.from_user.id, call.message.chat.id
-    )
+    if data.globals.users_dict[call.from_user.id]["message_list"]:
+        for msg in data.globals.users_dict[call.from_user.id]["message_list"]:
+            bot.delete_message(call.message.chat.id, msg)
+        data.globals.users_dict[call.from_user.id]["message_list"] = []

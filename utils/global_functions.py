@@ -29,3 +29,19 @@ def delete_msg(chat_id: int, user_id: int) -> None:
     """
     if not data.globals.users_dict[user_id]["message_id"] == 0:
         bot.delete_message(chat_id, data.globals.users_dict[user_id]["message_id"])
+
+    if data.globals.users_dict[user_id]["message_list"]:
+        for msg in data.globals.users_dict[user_id]["message_list"]:
+            bot.delete_message(chat_id, msg)
+        data.globals.users_dict[user_id]["message_list"].clear()
+
+
+def edit_reply_msg(chat_id: int, user_id: int) -> None:
+    """
+    Function. Edit inline kb.
+    :param chat_id:
+    :param user_id:
+    :return: None
+    """
+    if not data.globals.users_dict[user_id]["message_id"] == 0:
+        bot.edit_message_reply_markup(chat_id, data.globals.users_dict[user_id]["message_id"], reply_markup="")

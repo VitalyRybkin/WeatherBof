@@ -9,7 +9,7 @@ from keyboards.inline.inline_buttons import (
 
 from loader import bot
 from midwares.db_conn_center import read_data
-from midwares.sql_lib import Favorite, User
+from midwares.sql_lib import Wishlist, User
 from states.bot_states import States
 
 
@@ -34,11 +34,11 @@ def empty_wishlist(message) -> None:
     #     )
 
     query = (
-        f"SELECT {Favorite.user_favorite_city_name} "
-        f"FROM {Favorite.table_name} "
-        f"WHERE {Favorite.favorite_user_id}="
+        f"SELECT {Wishlist.name} "
+        f"FROM {Wishlist.table_name} "
+        f"WHERE {Wishlist.wishlist_user_id}="
         f"({User.get_user_id(message.from_user.id)})"
-        f"ORDER BY {Favorite.user_favorite_city_name}"
+        f"ORDER BY {Wishlist.name}"
     )
     get_wishlist = read_data(query)
 

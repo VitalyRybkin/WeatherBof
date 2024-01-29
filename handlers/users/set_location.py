@@ -1,3 +1,4 @@
+import copy
 import re
 
 from requests import Response
@@ -15,8 +16,8 @@ from keyboards.inline.inline_buttons import (
 )
 
 from loader import bot
-from midwares.api_conn_center import get_current_weather
-from midwares.db_conn_center import read_data
+from midwares.api_conn_center import api_search_location
+from midwares.db_conn_center import read_data_row
 from midwares.sql_lib import User
 from states.bot_states import States
 from utils.global_functions import delete_msg
@@ -33,24 +34,9 @@ def set_city_prompt(message) -> None:
     user_id: int = message.from_user.id
     chat_id: int = message.chat.id
 
-    # if (
-    #     not data.globals.users_dict[user_id]["message_id"] == 0
-    #     and not bot.get_state(user_id, chat_id) == States.set_location
-    # ):
-    #     bot.edit_message_reply_markup(
-    #         message.chat.id,
-    #         message_id=data.globals.users_dict[user_id]["message_id"],
-    #         reply_markup="",
-    #     )
+    get_loc_info = read_data_row(User.get_user_location_info(bot_user_id=user_id))[0]
 
-    query: str = (
-        f"SELECT {User.user_city} "
-        f"FROM {User.table_name} "
-        f"WHERE {User.bot_user}={user_id}"
-    )
-    get_user_info = read_data(query)
-
-    if get_user_info[0][0] is None:
+    if get_loc_info["id"] is None:
         markup = types.InlineKeyboardMarkup()
         cancel = inline_cancel_btn()
         set_location = inline_set_location_prompt_btn()
@@ -67,8 +53,9 @@ def set_city_prompt(message) -> None:
         change_location_keyboard = markup.add(change_location, cancel)
         msg = bot.send_message(
             chat_id,
-            f"Your favorite location is: {get_user_info[0][0]}",
+            f"Your favorite location is: <b>{get_loc_info['name']}</b>!\nChange it?",
             reply_markup=change_location_keyboard,
+            parse_mode="HTML",
         )
     bot.set_state(message.from_user.id, States.set_location, message.chat.id)
     data.globals.users_dict[user_id]["message_id"] = msg.message_id
@@ -84,53 +71,49 @@ def search_location(message) -> None:
     chat_id: int = message.chat.id
     user_id: int = message.from_user.id
 
-    if not data.globals.users_dict[user_id]["message_id"] == 0:
-        delete_msg(chat_id, user_id)
+    delete_msg(chat_id, user_id)
+    # if not data.globals.users_dict[user_id]["message_id"] == 0:
+    #     delete_msg(chat_id, user_id)
+    #     data.globals.users_dict[user_id]["message_id"] = 0
+
+    # edit_reply_msg(chat_id, user_id)
 
     bot_answer_formatting: list = [
         _.lower().capitalize() for _ in re.split("\\s+|-", message.text.strip())
     ]
     city_name: str = "%20".join(bot_answer_formatting)
 
-    response: Response = get_current_weather(city_name)
+    response: Response = api_search_location(city_name)
 
-    if "error" in response.json().keys() and response.json()["error"]["code"] == 1006:
-        bot.send_message(chat_id, response.json()["error"]["message"])
+    if not response.json():
+        bot.send_message(chat_id, "\U0001F937 Location not found!")
         msg = type_location(chat_id)
+        data.globals.users_dict[user_id]["message_id"] = msg.message_id
     else:
-        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
-        set_location_keyboard: InlineKeyboardMarkup | None = None
-        if States.search_location.operation == "Set prompt":
-            set_location_keyboard = markup.row(
-                inline_set_location_btn(
-                    "favorite", response.json()["location"]["name"]
-                ),
-                inline_cancel_btn(),
+        States.search_location.loc_dict = copy.deepcopy(response.json())
+        for row in States.search_location.loc_dict:
+            markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+            if States.search_location.operation == "Set prompt":
+                markup.add(inline_set_location_btn("favorite", str(row["id"])))
+            elif States.search_location.operation == "Change prompt":
+                markup.add(inline_change_location_btn("favorite", str(row["id"])))
+            elif States.search_location.operation == "Add prompt":
+                markup.add(inline_add_location_btn("wishlist", str(row["id"])))
+            msg: Message = bot.send_message(
+                chat_id,
+                f"Add location found: \n"
+                f"{'name:':<10} {row['name']}\n"
+                f"{'region:':<10}  {row['region']}\n"
+                f"{'country:':<10} {row['country']}",
+                reply_markup=markup,
             )
-        elif States.search_location.operation == "Add prompt":
-            set_location_keyboard = markup.row(
-                inline_add_location_btn(
-                    "wishlist", response.json()["location"]["name"]
-                ),
-                inline_cancel_btn(),
-            )
-        elif States.search_location.operation == "Change prompt":
-            set_location_keyboard = markup.row(
-                inline_change_location_btn(
-                    "favorite", response.json()["location"]["name"]
-                ),
-                inline_cancel_btn(),
-            )
-        msg: Message = bot.send_message(
-            chat_id,
-            f"Location found: \n"
-            f"{'name:':<10} {response.json()['location']['name']}\n"
-            f"{'region:':<10}  {response.json()['location']['region']}\n"
-            f"{'country:':<10} {response.json()['location']['country']}",
-            reply_markup=set_location_keyboard,
-        )
+            data.globals.users_dict[user_id]["message_list"].append(msg.message_id)
 
-    data.globals.users_dict[user_id]["message_id"] = msg.message_id
+        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+        markup.add(inline_cancel_btn())
+        msg = bot.send_message(chat_id, "Cancel or send me new location to search for!", reply_markup=markup)
+
+        data.globals.users_dict[user_id]["message_id"] = msg.message_id
 
 
 def type_location(chat_id: int) -> Message:

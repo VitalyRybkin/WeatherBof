@@ -2,19 +2,25 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS bot_user (
     user_id INTEGER,
-    bot_user INTEGER NOT NULL,
-    user_city VARCHAR(50) DEFAULT NULL,
+    bot_user_id INTEGER NOT NULL,
+    id INTEGER DEFAULT NULL,
+    name VARCHAR(50) DEFAULT NULL,
+    region VARCHAR(50) DEFAULT NULL,
+    country VARCHAR(50) DEFAULT NULL,
     metric VARCHAR(8) CHECK (metric in ('metric', 'american')) DEFAULT 'metric',
     reply_menu INTEGER CHECK (reply_menu=0 OR reply_menu=1) DEFAULT 1,
     PRIMARY KEY (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS favorite_city (
-    favorite_city_id INTEGER,
-    favorite_user_id INTEGER NOT NULL,
-    user_favorite_city_name VARCHAR(50) NOT NULL,
-    PRIMARY KEY (favorite_city_id)
-    FOREIGN KEY (favorite_user_id) REFERENCES bot_user(user_id)
+CREATE TABLE IF NOT EXISTS wishlist (
+    wishlist_id INTEGER,
+    wishlist_user_id INTEGER NOT NULL,
+    id INTEGER NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    region VARCHAR(50) DEFAULT NULL,
+    country VARCHAR(50) NOT NULL,
+    PRIMARY KEY (wishlist_id )
+    FOREIGN KEY (wishlist_user_id) REFERENCES bot_user(user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -67,9 +73,9 @@ CREATE TABLE IF NOT EXISTS default_weather (
     FOREIGN KEY (default_user_id) REFERENCES bot_user(user_id)
 );
 
-CREATE INDEX IF NOT EXISTS favorites_id_index ON favorite_city(favorite_city_id);
+CREATE INDEX IF NOT EXISTS wishlist_index ON wishlist(wishlist_id);
 CREATE INDEX IF NOT EXISTS hourly_id_index ON hourly_weather(hourly_weather_id);
 CREATE INDEX IF NOT EXISTS daily_id_index ON daily_weather(daily_weather_id);
 CREATE INDEX IF NOT EXISTS current_id_index ON current_weather(current_weather_id);
-CREATE INDEX IF NOT EXISTS users_user_id_index ON bot_user(user_id);
+CREATE INDEX IF NOT EXISTS bot_user_index ON bot_user(user_id);
 CREATE INDEX IF NOT EXISTS default_user_id_index ON default_weather(default_weather_id);

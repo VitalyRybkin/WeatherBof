@@ -1,0 +1,26 @@
+table {
+    border-collapse: collapse;
+    width: 400px;
+    font-family: Lato;
+    font-weight: 700;
+}
+
+
+.header {
+    padding: 5px 5px;
+    background-color: rgb(126, 162, 220);
+    color: rgb(9, 54, 145);
+}
+
+.header span {
+    color: aliceblue;
+    padding-left: 5px;
+    font-size: 13px
+}
+
+tbody td {
+    border-bottom: 1px solid rgb(126, 162, 220);
+    padding: 5px 5px;
+    font-weight: 400;
+    font-size: 13px;
+}

@@ -31,12 +31,12 @@ def start_command(message) -> None:
     user_id: int = message.from_user.id
     chat_id: int = message.chat.id
 
-    query: str = f"SELECT {User.bot_user}, {User.user_city} FROM {User.table_name} WHERE {User.bot_user}={user_id}"
+    query: str = f"SELECT {User.bot_user_id}, {User.name} FROM {User.table_name} WHERE {User.bot_user_id}={user_id}"
     get_user_info: list = read_data(query)
 
     if not get_user_info:
         write_data(
-            f'INSERT INTO {User.table_name} ("{User.bot_user}") VALUES ({user_id})'
+            f'INSERT INTO {User.table_name} ("{User.bot_user_id}") VALUES ({user_id})'
         )
         write_data(
             f'INSERT INTO {Current.table_name} ("{Current.current_weather_user_id}") '
@@ -70,6 +70,7 @@ def start_command(message) -> None:
             data.globals.users_dict.setdefault(user_id, dict())
             data.globals.users_dict[user_id]["count_not_defined"] = 0
             data.globals.users_dict[user_id]["message_id"] = 0
+            data.globals.users_dict[user_id]["message_list"] = []
             data.globals.users_dict[user_id]["chat_id"] = chat_id
             # TODO delete/edit messages
 
@@ -107,7 +108,7 @@ def start_command(message) -> None:
             bot.send_message(
                 chat_id,
                 f"Your favorite location - <b>{get_user_info[0][1]}</b>",
-                parse_mode="HTML"
+                parse_mode="HTML",
             )
             keyboards: ReplyKeyboardMarkup = reply_bottom_menu_kb(message.from_user.id)
             bot.send_message(
