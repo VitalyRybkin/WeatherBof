@@ -13,6 +13,7 @@ class LocationInfo:
 
 # TODO detach LocationInfo
 
+
 @dataclass(frozen=True)
 class BasicWeather(LocationInfo):
     last_updated: str
@@ -33,17 +34,21 @@ class CurrentMetric(BasicWeather):
     gust_kph: str
 
     def __repr__(self):
-        weather_text = (f"{'Last updated:':>18} - \U0001F5D3 {self.last_updated}\n"
-                        f"{'Condition:':>18} - {self.condition}\n"
-                        f"{'Cloud:': >18} - {self.cloud}%\n")
+        weather_text = (
+            f"{'Last updated:':>18} - \U0001F5D3 {self.last_updated}\n"
+            f"{'Condition:':>18} - {self.condition}\n"
+            f"{'Cloud:': >18} - {self.cloud}%\n"
+        )
 
         if self.humidity is not None:
             weather_text += f"{'Humidity:':>18} - {self.humidity}%\n"
 
-        weather_text += (f"{'Temperature:':>18} - {self.temp_c}\U00002103\n"
-                         f"{'Feels like:':>18} - {self.feelslike_c}\U00002103\n"
-                         f"{'Precipitations:':>18} - {self.precip_mm} mm\n"
-                         f"{'Wind:':>18} - {self.wind_kph} kph\n")
+        weather_text += (
+            f"{'Temperature:':>18} - {self.temp_c}\U00002103\n"
+            f"{'Feels like:':>18} - {self.feelslike_c}\U00002103\n"
+            f"{'Precipitations:':>18} - {self.precip_mm} mm\n"
+            f"{'Wind:':>18} - {self.wind_kph} kph\n"
+        )
 
         if self.wind_dir is not None:
             weather_text += f"{'Wind direction:':>18} - {self.wind_dir}\n"

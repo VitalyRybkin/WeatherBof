@@ -36,7 +36,9 @@ def my(message) -> None:
     #     f"WHERE {User.bot_user_id}={message.from_user.id}"
     # )
 
-    get_users_location = read_data_row(User.get_user_location_info(bot_user_id=message.from_user.id))
+    get_users_location = read_data_row(
+        User.get_user_location_info(bot_user_id=message.from_user.id)
+    )
 
     if get_users_location[0]["name"] is None:
         bot.send_message(chat_id, "You haven't /set your favorite location yet!")

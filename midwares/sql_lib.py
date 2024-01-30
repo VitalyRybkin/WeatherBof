@@ -27,15 +27,19 @@ class User:
 
     @classmethod
     def get_user_config(cls, *args):
-        return (f"SELECT {cls.metric}, {cls.reply_menu} "
-                f"FROM {cls.table_name} "
-                f"WHERE {cls.bot_user_id}={args[0]}")
+        return (
+            f"SELECT {cls.metric}, {cls.reply_menu} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.bot_user_id}={args[0]}"
+        )
 
     @classmethod
     def get_user_location_info(cls, **kwargs):
-        return (f"SELECT {cls.id}, {cls.name}, {cls.region}, {cls.country} "
-                f"FROM {cls.table_name} "
-                f"WHERE {cls.bot_user_id}={kwargs['bot_user_id']}")
+        return (
+            f"SELECT {cls.id}, {cls.name}, {cls.region}, {cls.country} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.bot_user_id}={kwargs['bot_user_id']}"
+        )
 
 
 @dataclass(frozen=True)
@@ -53,10 +57,12 @@ class Wishlist:
 
     @classmethod
     def get_wishlist_loc(cls, **kwargs):
-        return (f"SELECT {cls.id}, {cls.name}, {cls.region}, {cls.country} "
-                f"FROM {cls.table_name} "
-                f"WHERE {cls.wishlist_user_id}=({User.get_user_id(kwargs['user_id'])}) "
-                f"AND {cls.id}={kwargs['loc_id']}")
+        return (
+            f"SELECT {cls.id}, {cls.name}, {cls.region}, {cls.country} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.wishlist_user_id}=({User.get_user_id(kwargs['user_id'])}) "
+            f"AND {cls.id}={kwargs['loc_id']}"
+        )
 
 
 @dataclass(frozen=True)
@@ -74,9 +80,11 @@ class Current:
 
     @classmethod
     def get_user_current_weather_settings(cls, **kwargs):
-        return (f"SELECT {cls.wind_extended}, {cls.pressure}, {cls.visibility}, {cls.humidity} "
-                f"FROM {cls.table_name} "
-                f"WHERE {cls.current_weather_user_id}=({User.get_user_id(kwargs['bot_user_id'])})")
+        return (
+            f"SELECT {cls.wind_extended}, {cls.pressure}, {cls.visibility}, {cls.humidity} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.current_weather_user_id}=({User.get_user_id(kwargs['bot_user_id'])})"
+        )
 
 
 @dataclass(frozen=True)
