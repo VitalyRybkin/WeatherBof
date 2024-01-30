@@ -111,7 +111,11 @@ def search_location(message) -> None:
 
         markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
         markup.add(inline_cancel_btn())
-        msg = bot.send_message(chat_id, "Cancel or send me new location to search for!", reply_markup=markup)
+        msg = bot.send_message(
+            chat_id,
+            "Cancel or send me new location to search for!",
+            reply_markup=markup,
+        )
 
         data.globals.users_dict[user_id]["message_id"] = msg.message_id
 

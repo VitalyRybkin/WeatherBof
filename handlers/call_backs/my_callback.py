@@ -56,7 +56,9 @@ def hourly_weather_prompt(call) -> None:
 )
 def display_current_weather(call):
     bot.delete_state(call.from_user.id, call.message.chat.id)
-    current_weather_text: str = get_current_weather(States.my_prompt.loc_id, call.from_user.id)
+    current_weather_text: str = get_current_weather(
+        States.my_prompt.loc_id, call.from_user.id
+    )
     edit_reply_msg(call.message.chat.id, call.from_user.id)
     # bot.send_message(call.message.chat.id, current_weather_text, parse_mode="HTML")
     with open(current_weather_text, "rb") as p:

@@ -19,9 +19,7 @@ def reply_bottom_menu_kb(user_id) -> ReplyKeyboardMarkup | ReplyKeyboardRemove:
     if get_user_reply_menu_setting[0]["reply_menu"]:
         if get_user_reply_menu_setting[0]["name"] is not None:
             markup.add(
-                types.KeyboardButton(
-                    f"/my - {get_user_reply_menu_setting[0]['name']}"
-                )
+                types.KeyboardButton(f"/my - {get_user_reply_menu_setting[0]['name']}")
             )
             markup.add(
                 types.KeyboardButton(
