@@ -1,16 +1,15 @@
-import dataclasses
-import json
-from htmlwebshot import WebShot
+import calendar
+from datetime import datetime
 
 import requests
+from htmlwebshot import WebShot, Config
+import imgkit
 from requests import Response
 
 from data.config import API_TOKEN
-from midwares.api_lib import CurrentAmerican, CurrentMetric
+from midwares.api_lib import CurrentAmerican, CurrentMetric, LocationInfo
 from midwares.db_conn_center import read_data_row
 from midwares.sql_lib import Current, User
-
-#  import imgkit
 
 
 def get_current_weather(loc_id, bot_user_id) -> str:
@@ -21,14 +20,18 @@ def get_current_weather(loc_id, bot_user_id) -> str:
     current_weather: dict = requests.get(
         f"http://api.weatherapi.com/v1/current.json?key={API_TOKEN}&q=id:{loc_id}&aqi=no"
     ).json()
+
+    loc_info = LocationInfo(
+        name=current_weather["location"]["name"],
+        region=current_weather["location"]["region"],
+        country=current_weather["location"]["country"],
+        lat=current_weather["location"]["lat"],
+        lon=current_weather["location"]["lon"],
+        localtime=current_weather["location"]["localtime"],
+    )
+
     if get_user_units["metric"] == "metric":
-        parse_current_weather = CurrentMetric(
-            name=current_weather["location"]["name"],
-            region=current_weather["location"]["region"],
-            country=current_weather["location"]["country"],
-            lat=current_weather["location"]["lat"],
-            lon=current_weather["location"]["lon"],
-            localtime=current_weather["location"]["localtime"],
+        parse_loc_weather = CurrentMetric(
             last_updated=current_weather["current"]["last_updated"],
             temp_c=current_weather["current"]["temp_c"],
             condition=current_weather["current"]["condition"]["text"],
@@ -53,13 +56,7 @@ def get_current_weather(loc_id, bot_user_id) -> str:
             else None,
         )
     else:
-        parse_current_weather = CurrentAmerican(
-            name=current_weather["location"]["name"],
-            region=current_weather["location"]["region"],
-            country=current_weather["location"]["country"],
-            lat=current_weather["location"]["lat"],
-            lon=current_weather["location"]["lon"],
-            localtime=current_weather["location"]["localtime"],
+        parse_loc_weather = CurrentAmerican(
             last_updated=current_weather["current"]["last_updated"],
             temp_f=current_weather["current"]["temp_f"],
             condition=current_weather["current"]["condition"]["text"],
@@ -84,16 +81,26 @@ def get_current_weather(loc_id, bot_user_id) -> str:
             else None,
         )
 
-    text = dataclasses.asdict(parse_current_weather)
+    # text = dataclasses.asdict(parse_loc_weather)
+    # text = parse_loc_weather.__repr__()
 
-    html_file: str = create_html(text)
+    html_file: str = create_html(parse_loc_weather, loc_info)
     with open("./html/current_weather_index.html", "w") as current_weather_html:
         current_weather_html.write(html_file)
 
     shot = WebShot()
-    # shot.config = Config(wkhtmltopdf="/usr/local/bin/wkhtmltopdf", wkhtmltoimage="/usr/local/bin/wkhtmltoimage")
-    shot.flags = ["--quiet", "--enable-javascript", "--no-stop-slow-scripts"]
-    shot.params = {"--crop-w": 415}
+    shot.config = Config(
+        wkhtmltopdf="/usr/local/bin/wkhtmltopdf",
+        wkhtmltoimage="/usr/local/bin/wkhtmltoimage",
+    )
+    shot.flags = [
+        "--quiet",
+        "--enable-javascript",
+        "--no-stop-slow-scripts",
+        "--encoding 'UTF-8'",
+        "--images",
+    ]
+    shot.params = {"--crop-w": 315}
     #  shot.delay = 5
     weather_pic = shot.create_pic(
         html="./html/current_weather_index.html",
@@ -101,23 +108,19 @@ def get_current_weather(loc_id, bot_user_id) -> str:
         output="out.jpg",
     )
 
-    text_js = [dataclasses.asdict(parse_current_weather)]
+    options = {
+        "format": "png",
+        "crop-w": "315",
+        "encoding": "UTF-8",
+        "enable-javascript": None,
+        "enable-local-file-access": None,
+    }
 
-    with open("./html/current_weather.json", "w") as current_weather_info:
-        json.dump(text_js, current_weather_info, indent=4)
-
-    shot.create_pic(
-        html="./html/current_weather_js_index.html",
-        css="./html/current_weather_style.css",
-        output="out_js.jpg",
-    )
-
-    # kitoptions = {
-    #     "enable-local-file-access": None
-    # }
-    #
-    # # imgkit.from_file('./html/current_weather_index.html', './out.jpg')
-    # result = imgkit.from_file('./html/current_weather_index.html', 'out.jpg', options=kitoptions)
+    css = "./html/current_weather_style.css"
+    with open("./html/current_weather_js_index.html", "r"):
+        imgkit.from_file(
+            "./html/current_weather_js_index.html", "out3.png", options=options, css=css
+        )
 
     return weather_pic
 
@@ -132,40 +135,45 @@ def api_search_location(loc_name) -> Response:
     )
 
 
-def create_html(parse_current_weather) -> str:
+def create_html(parse_loc_weather, loc_info) -> str:
     # TODO rewrite with Airium
-    header = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="current_weather_style.css">
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-        <title>Current weather</title>
-    </head>
-    <body>
-        """
+    parsed_weather = parse_loc_weather.__repr__()
 
-    table_head = f"""
-        <thead>
-          <tr>
-            <th colspan="2" class="header">Last updated:  <span>{parse_current_weather["last_updated"]}</span></th>
-          </tr>
-        </thead>
-    """
+    week_day = calendar.day_name[
+        datetime.strptime(
+            parse_loc_weather.last_updated.split()[0], "%Y-%m-%d"
+        ).weekday()
+    ]
+    month_date = datetime.strptime(
+        parse_loc_weather.last_updated.split()[0], "%Y-%m-%d"
+    ).day
+    time = parse_loc_weather.last_updated.split()[1]
 
-    table_body = f"""
-    <tbody class="table_body">
-"""
-    for k, v in parse_current_weather.items():
-        if not k == "last_updated":
-            table_body += f"\t\t\t<tr><td>{k}</td>"
-            table_body += f"<td>{v}</td></tr>\n"
+    header = (
+        f"<!DOCTYPE html>\n"
+        f'<html lang="en">\n'
+        f"<head>\n"
+        f'<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />\n'
+        f'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
+        f'<link rel="stylesheet" href="current_weather_style.css">\n'
+        '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">\n'
+        f"<title>Current weather</title>\n"
+        f"</head>\n"
+        f"<body>\n"
+    )
 
-    table_body += """
-        </tbody>
-    """
+    table_head = (
+        f"\t<thead>\n"
+        f"\t\t<tr>\n"
+        f'\t\t\t<th colspan="2" class="header">{loc_info.name}, {loc_info.country}</th>\n'
+        f"\t\t</tr>\n"
+        f"\t\t<tr>\n"
+        f'\t\t\t<th colspan="2" class="header"><span>{week_day}, {month_date}, {time}</span></th>\n'
+        f"\t\t</tr>\n"
+        f"\t</thead>\n"
+    )
+
+    table_body = f'\t<tbody class="table_body">\n' f"{parsed_weather}" f"\t</tbody>\n"
 
     return (
         f"{header}\n"

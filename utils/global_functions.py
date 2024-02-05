@@ -44,4 +44,6 @@ def edit_reply_msg(chat_id: int, user_id: int) -> None:
     :return: None
     """
     if not data.globals.users_dict[user_id]["message_id"] == 0:
-        bot.edit_message_reply_markup(chat_id, data.globals.users_dict[user_id]["message_id"], reply_markup="")
+        bot.edit_message_reply_markup(
+            chat_id, data.globals.users_dict[user_id]["message_id"], reply_markup=""
+        )

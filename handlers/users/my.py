@@ -24,18 +24,6 @@ def my(message) -> None:
     """
     chat_id: int = message.chat.id
 
-    # if (not data.globals.users_dict[message.from_user.id]['message_id'] == 0 and
-    #         not bot.get_state(message.from_user.id, message.chat.id) == States.my_prompt):
-    #     bot.edit_message_reply_markup(message.chat.id,
-    #                                   data.globals.users_dict[message.from_user.id]['message_id'],
-    #                                   reply_markup="")
-
-    # query: str = (
-    #     f"SELECT {User.name} "
-    #     f"FROM {User.table_name} "
-    #     f"WHERE {User.bot_user_id}={message.from_user.id}"
-    # )
-
     get_users_location = read_data_row(
         User.get_user_location_info(bot_user_id=message.from_user.id)
     )
