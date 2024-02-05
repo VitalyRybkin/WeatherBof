@@ -63,3 +63,4 @@ def display_current_weather(call):
     # bot.send_message(call.message.chat.id, current_weather_text, parse_mode="HTML")
     with open(current_weather_text, "rb") as p:
         bot.send_photo(call.message.chat.id, p)
+    data.globals.users_dict[call.from_user.id]["message_id"] = 0

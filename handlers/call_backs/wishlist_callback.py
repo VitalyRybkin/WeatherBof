@@ -5,7 +5,7 @@ from handlers.users.my import my_prompt_msg
 from keyboards.inline.inline_buttons import inline_set_wishlist_btn, inline_cancel_btn
 from keyboards.reply.reply_buttons import reply_bottom_menu_kb
 from loader import bot
-from midwares.db_conn_center import write_data, read_data
+from midwares.db_conn_center import write_data, read_data, read_data_row
 from midwares.sql_lib import Wishlist, User
 from states.bot_states import States
 from utils.global_functions import delete_msg
@@ -116,5 +116,16 @@ def wishlist_loc_output(call) -> None:
     """
     States.my_prompt.user_id = call.from_user.id
     parse_callback = call.data.split("|")
-    States.my_prompt.city = parse_callback[1]
+    States.my_prompt.loc_name = parse_callback[1]
+
+    query: str = (
+        f"SELECT {Wishlist.id} "
+        f"FROM {Wishlist.table_name} "
+        f"WHERE {Wishlist.wishlist_user_id}="
+        f"({User.get_user_id(call.from_user.id)}) "
+        f"AND {Wishlist.name}='{parse_callback[1]}'"
+    )
+
+    States.my_prompt.loc_id = read_data(query)[0][0]
+
     my_prompt_msg(call.message)

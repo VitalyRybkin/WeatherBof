@@ -21,15 +21,6 @@ def wishlist_prompt(message) -> None:
     :param message:
     :return: None
     """
-    # if (
-    #     not data.globals.users_dict[message.from_user.id]["message_id"] == 0
-    #     and not bot.get_state(message.from_user.id, message.chat.id) == States.wishlist
-    # ):
-    #     bot.edit_message_reply_markup(
-    #         message.chat.id,
-    #         message_id=data.globals.users_dict[message.from_user.id]["message_id"],
-    #         reply_markup="",
-    #     )
 
     if not data.globals.users_dict[message.from_user.id]["message_id"] == 0:
         delete_msg(message.chat.id, message.from_user.id)
