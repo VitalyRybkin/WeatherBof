@@ -100,6 +100,14 @@ class Hourly:
     visibility: str = "visibility"
     humidity: str = "humidity"
 
+    @classmethod
+    def get_hourly_settings(cls, **kwargs):
+        return (
+            f"SELECT {cls.wind_extended}, {cls.pressure}, {cls.visibility}, {cls.humidity} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.hourly_weather_user_id}=({User.get_user_id(kwargs['bot_user_id'])})"
+        )
+
 
 @dataclass(frozen=True)
 class Daily:
@@ -112,6 +120,14 @@ class Daily:
     astro: str = "astro"
     visibility: str = "visibility"
     humidity: str = "humidity"
+
+    @classmethod
+    def get_daily_settings(cls, **kwargs):
+        return (
+            f"SELECT {cls.astro}, {cls.visibility}, {cls.humidity} "
+            f"FROM {cls.table_name} "
+            f"WHERE {cls.daily_weather_user_id}=({User.get_user_id(kwargs['bot_user_id'])})"
+        )
 
 
 @dataclass(frozen=True)

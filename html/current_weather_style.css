@@ -1,28 +1,72 @@
 table {
     border-collapse: collapse;
     width: 300px;
-    font-family: Lato;
+    font-family: Lato, sans-serif;
+    table-layout: fixed;
+    /*width: 100%;*/
 }
 
-
 .header {
-    padding: 5px 5px;
-    background-color: rgb(158, 185, 228);
-    color: rgb(14, 39, 89);
+    background-color: #1e5878;
+    color: #FFF;
 }
 
 .header span {
-    color: aliceblue;
     padding-left: 5px;
+}
+
+.header_loc {
+    padding: 10px 0;
+    border-bottom: 1px solid #DDDDDD;
+}
+
+.header_date {
+    padding: 10px 0;
+}
+
+.condition span {
+    font-family: "Protest Riot", sans-serif;
+    font-size: 40px;
+    color: #900000;
+}
+
+.img {
+    padding-top: 15px;
+}
+
+
+.temp, .feelslike {
+    /*padding: 10px;*/
+    color: #1e5878;
+}
+
+.temp span, .feelslike span {
+    color: #ed8e4a;
+}
+
+.feelslike {
+    font-size: 14px;
+    padding-bottom: 10px;
 }
 
 thead th {
     font-weight: 900;
     font-size: 16px;
 }
+
 tbody td {
     border-bottom: 1px solid rgb(126, 162, 220);
-    padding: 5px 15px;
+    padding: 5px 5px;
     font-weight: 400;
     font-size: 14px;
+    color: rgb(14, 39, 89);
+}
+
+tbody td:first-child {
+    text-align: right;
+    width: 48%;
+}
+
+tbody td:nth-child(2) {
+    font-weight: 900;
 }
