@@ -1,7 +1,7 @@
 table {
     border-collapse: collapse;
     width: 300px;
-    font-family: Lato, sans-serif;
+    font-family: "Tahoma", sans-serif;
     table-layout: fixed;
     /*width: 100%;*/
 }
@@ -50,7 +50,7 @@ table {
 }
 
 thead th {
-    font-weight: 900;
+    /*font-weight: 900;*/
     font-size: 16px;
 }
 
@@ -69,4 +69,5 @@ tbody td:first-child {
 
 tbody td:nth-child(2) {
     font-weight: 900;
+    color: #900000;
 }
