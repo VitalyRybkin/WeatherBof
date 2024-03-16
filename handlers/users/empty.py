@@ -21,18 +21,6 @@ def empty_wishlist(message) -> None:
     :param message:
     :return:
     """
-
-    # if (
-    #     not data.globals.users_dict[message.from_user.id]["message_id"] == 0
-    #     and not bot.get_state(message.from_user.id, message.chat.id)
-    #     == States.empty_wishlist
-    # ):
-    #     bot.edit_message_reply_markup(
-    #         message.chat.id,
-    #         message_id=data.globals.users_dict[message.from_user.id]["message_id"],
-    #         reply_markup="",
-    #     )
-
     query = (
         f"SELECT {Wishlist.name} "
         f"FROM {Wishlist.table_name} "

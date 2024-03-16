@@ -64,13 +64,6 @@ def add_location_to_db(call) -> None:
                 break
 
     elif parse_call_data[1] == "wishlist":
-        # query = (
-        #     f"SELECT {Wishlist.name} "
-        #     f"FROM {Wishlist.table_name} "
-        #     f"WHERE {Wishlist.wishlist_user_id}="
-        #     f"({User.get_user_id(call.from_user.id)}) "
-        #     f"AND {Wishlist.name}='{parse_call_data[2]}'"
-        # )
         get_wishlist_info = read_data(
             Wishlist.get_wishlist_loc(
                 user_id=call.from_user.id, loc_id=int(parse_call_data[2])
