@@ -56,12 +56,12 @@ def hourly_weather_prompt(call) -> None:
 )
 def display_current_weather(call):
     bot.delete_state(call.from_user.id, call.message.chat.id)
-    current_weather_text: str = get_current_weather(
+    current_weather_pic = get_current_weather(
         States.my_prompt.loc_id, call.from_user.id
     )
     edit_reply_msg(call.message.chat.id, call.from_user.id)
     # bot.send_message(call.message.chat.id, current_weather_text, parse_mode="HTML")
-    with open(current_weather_text, "rb") as p:
+    with open(current_weather_pic, "rb") as p:
         bot.send_photo(call.message.chat.id, p)
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
 
@@ -73,4 +73,7 @@ def display_daily_weather(call):
     query = (User.get_user_location_info(bot_user_id=call.from_user.id))
     loc_id = read_data_row(query)[0]
     parsed_call_data = call.data.split("|")
-    get_daily_forecast_weather(loc_id["id"], call.from_user.id, parsed_call_data[2])
+    forecast_weather_pic =  get_daily_forecast_weather(loc_id["id"], call.from_user.id, parsed_call_data[2])
+    with open(forecast_weather_pic, "rb") as p:
+        bot.send_photo(call.message.chat.id, p)
+    data.globals.users_dict[call.from_user.id]["message_id"] = 0

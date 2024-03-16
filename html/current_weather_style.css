@@ -26,7 +26,7 @@ table {
 
 .condition span {
     font-family: "Protest Riot", sans-serif;
-    font-size: 40px;
+    font-size: 30px;
     color: #900000;
 }
 
@@ -34,10 +34,13 @@ table {
     padding-top: 15px;
 }
 
-
 .temp, .feelslike {
     /*padding: 10px;*/
     color: #1e5878;
+}
+
+.temp {
+    padding-top: 15px;
 }
 
 .temp span, .feelslike span {
@@ -62,12 +65,12 @@ tbody td {
     color: rgb(14, 39, 89);
 }
 
-tbody td:first-child {
+tbody tr td:nth-child(odd) {
     text-align: right;
     width: 48%;
 }
 
-tbody td:nth-child(2) {
+tbody tr td:nth-child(even) {
     font-weight: 900;
     color: #900000;
 }
