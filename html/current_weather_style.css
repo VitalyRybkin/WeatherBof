@@ -26,7 +26,7 @@ table {
 
 .condition span {
     font-family: "Protest Riot", sans-serif;
-    font-size: 30px;
+    font-size: 25px;
     color: #900000;
 }
 
@@ -44,12 +44,17 @@ table {
 }
 
 .temp span, .feelslike span {
-    color: #ed8e4a;
+    font-size: 24px;
+    color: #ef6300;
 }
 
 .feelslike {
-    font-size: 14px;
     padding-bottom: 10px;
+    opacity: 0.8;
+}
+
+.feelslike span {
+    font-size: 18px;
 }
 
 thead th {

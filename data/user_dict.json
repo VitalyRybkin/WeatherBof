@@ -4,6 +4,6 @@
         "message_id": 0,
         "message_list": [],
         "chat_id": 66283995,
-        "state": "States:weather_display_daily"
+        "state": "States:weather_display_hourly"
     }
 }

@@ -1,10 +1,12 @@
 import calendar
+import math
 from collections import namedtuple
 from datetime import datetime
 
 import requests
 from airium import Airium
 from htmlwebshot import WebShot, Config
+from icecream import ic
 from requests import Response
 
 from data.config import API_TOKEN
@@ -19,7 +21,7 @@ from midwares.api_lib import (
     astro,
 )
 from midwares.db_conn_center import read_data_row
-from midwares.sql_lib import Current, User, Daily
+from midwares.sql_lib import Current, User, Daily, Hourly
 
 
 def api_search_location(loc_name) -> Response:
@@ -60,10 +62,6 @@ def get_current_weather(loc_id, bot_user_id) -> str:
         weather.write(html_file)
 
     shot = WebShot()
-    shot.config = Config(
-        wkhtmltopdf="/usr/local/bin/wkhtmltopdf",
-        wkhtmltoimage="/usr/local/bin/wkhtmltoimage",
-    )
     shot.flags = [
         "--quiet",
         "--enable-javascript",
@@ -86,9 +84,6 @@ def get_daily_forecast_weather(loc_id, bot_user_id, days):
     get_daily_settings: dict = read_data_row(
         Daily.get_daily_settings(bot_user_id=bot_user_id)
     )[0]
-    # get_hourly_settings: dict = read_data_row(
-    #     Hourly.get_hourly_settings(bot_user_id=bot_user_id)
-    # )[0]
     get_user_units: dict = read_data_row(User.get_user_config(bot_user_id))[0]
     forecast_weather: dict = requests.get(
         f"https://api.weatherapi.com/v1/forecast.json?key={API_TOKEN}&q=id:{loc_id}&days={days}&aqi=no&alerts=no"
@@ -107,7 +102,7 @@ def get_daily_forecast_weather(loc_id, bot_user_id, days):
                 day["day"]["avgvis_km"], day["day"]["avgvis_miles"] = None, None
 
     html_file: str = create_html(
-        forecast_weather, get_user_units["metric"], weather_type="forecast"
+        forecast_weather, get_user_units["metric"], weather_type="forecast_daily"
     )
 
     with open("./html/weather.html", "w") as weather:
@@ -126,7 +121,65 @@ def get_daily_forecast_weather(loc_id, bot_user_id, days):
         "--images",
     ]
     shot.params = {
-        "--crop-w": 315 * len(forecast_weather["forecast"]["forecastday"])
+        "--crop-w": 210 * len(forecast_weather["forecast"]["forecastday"])
+                    - 7 * (len(forecast_weather["forecast"]["forecastday"]) - 1)
+    }
+    shot.delay = 3
+    weather_pic = shot.create_pic(
+        html="./html/weather.html",
+        css="./html/current_weather_style.css",
+        output="./html/weather_pic.jpg",
+    )
+
+    return weather_pic
+
+
+def get_hourly_forecast_weather(loc_id, bot_user_id, hours):
+    get_hourly_settings: dict = read_data_row(
+        Hourly.get_hourly_settings(bot_user_id=bot_user_id)
+    )[0]
+    get_user_units: dict = read_data_row(User.get_user_config(bot_user_id))[0]
+    days = math.ceil(int(hours) / 24)
+    forecast_weather: dict = requests.get(
+        f"https://api.weatherapi.com/v1/forecast.json?key={API_TOKEN}&q=id:{loc_id}&days={days}&aqi=no&alerts=no"
+    ).json()
+    ic(get_hourly_settings)
+
+    for key, val in get_hourly_settings.items():
+        if key == "pressure" and val == 0:
+            for day in forecast_weather["forecast"]["forecastday"]:
+                for hour in day["hour"]:
+                    hour["pressure_in"],  hour["pressure_mb"] = None, None
+        if key == "humidity" and val == 0:
+            for day in forecast_weather["forecast"]["forecastday"]:
+                for hour in day["hour"]:
+                    hour["humidity"] = None
+        if key == "visibility" and val == 0:
+            for day in forecast_weather["forecast"]["forecastday"]:
+                for hour in day["hour"]:
+                    hour["vis_km"], hour["vis_miles"] = None, None
+        if key == "wind_extended" and val == 0:
+            for day in forecast_weather["forecast"]["forecastday"]:
+                for hour in day["hour"]:
+                    hour["gust_kph"], hour["gust_mph"], hour["windchill_c"], hour["windchill_f"] = None, None, None, None
+
+    html_file: str = create_html(
+        forecast_weather, get_user_units["metric"], weather_type="forecast_hourly"
+    )
+
+    with open("./html/weather.html", "w") as weather:
+        weather.write(html_file)
+
+    shot = WebShot()
+    shot.flags = [
+        "--quiet",
+        "--enable-javascript",
+        "--no-stop-slow-scripts",
+        "--encoding 'UTF-8'",
+        "--images",
+    ]
+    shot.params = {
+        "--crop-w": 210 * len(forecast_weather["forecast"]["forecastday"])
                     - 7 * (len(forecast_weather["forecast"]["forecastday"]) - 1)
     }
     shot.delay = 3
@@ -153,7 +206,8 @@ def create_html(
     """
     weather = weather_data["current"]
     location = weather_data["location"]
-
+    hourly_weather = [day["hour"] for day in weather_data["forecast"]["forecastday"]]
+    ic(weather_data["forecast"]["forecastday"])
     html_doc = Airium()
 
     html_doc("<!DOCTYPE html>")
@@ -175,7 +229,7 @@ def create_html(
             table_width = (
                 "300px"
                 if weather_type == "current"
-                else f"{300 * len(weather_data['forecast']['forecastday'])}px"
+                else f"{200 * len(weather_data['forecast']['forecastday'])}px"
             )
             with html_doc.table(style=f"width:{table_width};"):
                 if weather_type == "current":
@@ -226,7 +280,7 @@ def create_html(
                                     param = f'{weather["feelslike_f"]}{metric_units["feelslike_f"]}'
                                 html_doc.span(_t=param)
 
-                elif weather_type == "forecast":
+                elif weather_type == "forecast_daily":
                     with html_doc.thead():
                         with html_doc.tr():
                             html_doc.th(
@@ -258,7 +312,7 @@ def create_html(
                         with html_doc.tr():
                             for day in weather_data["forecast"]["forecastday"]:
                                 with html_doc.th(
-                                        klass="temp", colspan=2, _t=f"Max temp."
+                                        klass="temp", colspan=2, _t=f"Max"
                                 ):
                                     if user_units == "metric":
                                         param = f'{day["day"]["maxtemp_c"]}{metric_units["temp_c"]}'
@@ -268,7 +322,7 @@ def create_html(
                         with html_doc.tr():
                             for day in weather_data["forecast"]["forecastday"]:
                                 with html_doc.th(
-                                        klass="feelslike", colspan=2, _t=f"Min temp."
+                                        klass="feelslike", colspan=2, _t=f"Min"
                                 ):
                                     if user_units == "metric":
                                         param = f'{day["day"]["mintemp_c"]}{metric_units["temp_c"]}'

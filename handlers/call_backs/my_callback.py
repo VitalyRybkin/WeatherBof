@@ -1,7 +1,7 @@
 import data
 from handlers.users.my import my_prompt_msg, weather_output_hourly, weather_output_daily
 from loader import bot
-from midwares.api_conn_center import get_current_weather, get_daily_forecast_weather
+from midwares.api_conn_center import get_current_weather, get_daily_forecast_weather, get_hourly_forecast_weather
 from midwares.db_conn_center import read_data_row
 from midwares.sql_lib import Hourly, Daily, Current, User
 from states.bot_states import States
@@ -10,7 +10,7 @@ from utils.global_functions import edit_reply_msg
 
 @bot.callback_query_handler(
     func=lambda call: call.data
-    in [f"{Hourly.table_name}_display", f"{Daily.table_name}_display"]
+                      in [f"{Hourly.table_name}_display", f"{Daily.table_name}_display"]
 )
 def set_weather_display(call) -> None:
     """
@@ -72,6 +72,19 @@ def display_daily_weather(call):
     loc_id = read_data_row(query)[0]
     parsed_call_data = call.data.split("|")
     forecast_weather_pic = get_daily_forecast_weather(
+        loc_id["id"], call.from_user.id, parsed_call_data[2]
+    )
+    with open(forecast_weather_pic, "rb") as p:
+        bot.send_photo(call.message.chat.id, p)
+    data.globals.users_dict[call.from_user.id]["message_id"] = 0
+
+
+@bot.callback_query_handler(func=lambda call: f"{Hourly.table_name}|hour|" in call.data)
+def display_hourly_weather(call):
+    query = User.get_user_location_info(bot_user_id=call.from_user.id)
+    loc_id = read_data_row(query)[0]
+    parsed_call_data = call.data.split("|")
+    forecast_weather_pic = get_hourly_forecast_weather(
         loc_id["id"], call.from_user.id, parsed_call_data[2]
     )
     with open(forecast_weather_pic, "rb") as p:
