@@ -26,11 +26,14 @@ row_text: dict[str, str] = {
     "gust_mph": "Gust: ",
     "daily_chance_of_rain": "Chance of rain: ",
     "daily_chance_of_snow": "Chance of snow: ",
+    "chance_of_snow": "Chance of snow: ",
+    "chance_of_rain": "Chance of rain: ",
     "moon_phase": "Moon phase: ",
     "moonrise": "Moonrise: ",
     "moonset": "Moonset: ",
     "sunrise": "Sunrise: ",
     "sunset": "Sunset: ",
+    "windchill_c": "Windchill: ",
 }
 
 loc_params: list[str] = [
@@ -67,18 +70,31 @@ metric_units: dict[str, str] = {
     "cloud": "%",
     "daily_chance_of_rain": "%",
     "daily_chance_of_snow": "%",
+    "chance_of_rain": "%",
+    "chance_of_snow": "%",
+    "windchill_c": "C",
 }
 
 am_units: dict[str, str] = {
     "feelslike_f": "F",
     "temp_f": "F",
+    "avgtemp_f": "F",
     "gust_mph": " mph",
     "wind_mph": " mph",
+    "maxwind_mph": " mph",
     "precip_in": " in",
+    "totalprecip_in": " in",
     "pressure_in": " in",
-    "vis_miles": " miles",
+    "vis_miles": " mls",
+    "avgvis_miles": " mls",
     "humidity": "%",
+    "avghumidity": "%",
     "cloud": "%",
+    "daily_chance_of_rain": "%",
+    "daily_chance_of_snow": "%",
+    "chance_of_rain": "%",
+    "chance_of_snow": "%",
+    "windchill_f": "F",
 }
 
 current_weather_metric: list[str] = [
@@ -121,4 +137,34 @@ daily_weather_am: list[str] = [
     "avgvis_miles",
     "daily_chance_of_rain",
     "daily_chance_of_snow",
+]
+
+hourly_weather_metric: list[str] = [
+    "feelslike_c",
+    "cloud",
+    "wind_dir",
+    "wind_kph",
+    "gust_kph",
+    "windchill_c",
+    "vis_km",
+    "humidity",
+    "precip_mm",
+    "pressure_mb",
+    "chance_of_rain",
+    "chance_of_snow",
+]
+
+hourly_weather_am: list[str] = [
+    "feelslike_f",
+    "cloud",
+    "wind_dir",
+    "wind_mph",
+    "gust_mph",
+    "windchill_f",
+    "vis_miles",
+    "humidity",
+    "precip_in",
+    "pressure_in",
+    "chance_of_rain",
+    "chance_of_snow",
 ]
