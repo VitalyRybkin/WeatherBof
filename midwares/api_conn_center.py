@@ -173,44 +173,58 @@ def get_hourly_forecast_weather(loc_id, bot_user_id, hours):
                         hour["windchill_f"],
                     ) = (None, None, None, None)
 
-    html_file: str = create_html(
-        forecast_weather,
-        get_user_units["metric"],
-        weather_type="forecast_hourly",
-        hours=hours,
-    )
-
-    with open("./html/weather.html", "w") as weather:
-        weather.write(html_file)
-
-    shot = WebShot()
-    shot.flags = [
-        "--quiet",
-        "--enable-javascript",
-        "--no-stop-slow-scripts",
-        "--encoding 'UTF-8'",
-        "--images",
-    ]
-
     hourly_weather = []
+    counter = int(hours)
+    day_num = 0
+    flag = False
     for day in forecast_weather["forecast"]["forecastday"]:
         for time in day["hour"]:
             forecast_hour = (
                 datetime.strptime(time["time"], "%Y-%m-%d %H:%M").time().hour
             )
-            counting_hours_until = int(hours) + datetime.now().hour
-            if datetime.now().hour <= forecast_hour < counting_hours_until:
+            if day_num == 0 and datetime.now().hour <= forecast_hour:
+                flag = True
+            if flag and counter > 0:
                 hourly_weather.append(time)
+                counter -= 1
+        day_num += 1
 
-    shot.params = {"--crop-w": 225 * len(hourly_weather)}
-    shot.delay = 3
-    weather_pic = shot.create_pic(
-        html="./html/weather.html",
-        css="./html/current_weather_style.css",
-        output="./html/weather_pic.jpg",
-    )
+    pic_array: list = []
+    for counter in range(0, len(hourly_weather), 4):
+        hourly_weather_slice = hourly_weather[counter:counter+4] \
+            if counter + 4 <= len(hourly_weather) \
+            else hourly_weather[counter:]
 
-    return weather_pic
+        html_file: str = create_html(
+            forecast_weather,
+            get_user_units["metric"],
+            weather_type="forecast_hourly",
+            hours=hours,
+            hourly_weather=hourly_weather_slice,
+        )
+
+        with open("./html/weather.html", "w") as weather:
+            weather.write(html_file)
+
+        shot = WebShot()
+        shot.flags = [
+            "--quiet",
+            "--enable-javascript",
+            "--no-stop-slow-scripts",
+            "--encoding 'UTF-8'",
+            "--images",
+        ]
+
+        shot.params = {"--crop-w": 225 * len(hourly_weather)}
+        shot.delay = 1
+        weather_pic = shot.create_pic(
+            html="./html/weather.html",
+            css="./html/current_weather_style.css",
+            output=f"./html/weather_pic_{counter}-{counter+4}.jpg",
+        )
+        pic_array.append(weather_pic)
+
+    return pic_array
 
 
 def create_html(
@@ -225,17 +239,18 @@ def create_html(
     """
     weather = weather_data["current"]
     location = weather_data["location"]
-    hourly_weather = []
+    # hourly_weather = []
+    hourly_weather = kwargs["hourly_weather"]
 
-    for day in weather_data["forecast"]["forecastday"]:
-        for time in day["hour"]:
-            forecast_hour = (
-                datetime.strptime(time["time"], "%Y-%m-%d %H:%M").time().hour
-            )
-            counting_hours_until = int(kwargs["hours"]) + datetime.now().hour
-            if datetime.now().hour <= forecast_hour < counting_hours_until:
-                hourly_weather.append(time)
-    ic(len(hourly_weather), hourly_weather)
+    # if weather_type == "forecast_hourly":
+    #     for day in weather_data["forecast"]["forecastday"]:
+    #         for time in day["hour"]:
+    #             forecast_hour = (
+    #                 datetime.strptime(time["time"], "%Y-%m-%d %H:%M").time().hour
+    #             )
+    #             counting_hours_until = int(kwargs["hours"]) + datetime.now().hour
+    #             if datetime.now().hour <= forecast_hour < counting_hours_until:
+    #                 hourly_weather.append(time)
 
     html_doc = Airium()
 

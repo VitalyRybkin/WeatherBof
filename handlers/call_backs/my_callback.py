@@ -84,9 +84,11 @@ def display_hourly_weather(call):
     query = User.get_user_location_info(bot_user_id=call.from_user.id)
     loc_id = read_data_row(query)[0]
     parsed_call_data = call.data.split("|")
-    forecast_weather_pic = get_hourly_forecast_weather(
+
+    forecast_weather_pic_arr = get_hourly_forecast_weather(
         loc_id["id"], call.from_user.id, parsed_call_data[2]
     )
-    with open(forecast_weather_pic, "rb") as p:
-        bot.send_photo(call.message.chat.id, p)
+    for forecast_weather_pic in forecast_weather_pic_arr:
+        with open(forecast_weather_pic, "rb") as p:
+            bot.send_photo(call.message.chat.id, p)
     data.globals.users_dict[call.from_user.id]["message_id"] = 0
