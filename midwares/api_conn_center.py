@@ -240,7 +240,7 @@ def create_html(
     weather = weather_data["current"]
     location = weather_data["location"]
     # hourly_weather = []
-    hourly_weather = kwargs["hourly_weather"]
+    hourly_weather = kwargs.get("hourly_weather", None)
 
     # if weather_type == "forecast_hourly":
     #     for day in weather_data["forecast"]["forecastday"]:

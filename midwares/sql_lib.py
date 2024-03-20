@@ -146,9 +146,9 @@ class Default:
     daily_weather: str = "daily_weather"
 
     @classmethod
-    def get_default_settings(cls, *args):
+    def get_default_settings(cls, **kwargs):
         return (
             f"SELECT {cls.current_weather}, {cls.hourly_weather}, {cls.daily_weather} "
             f"FROM {cls.table_name} "
-            f"WHERE {cls.default_user_id}={args[0]}"
+            f"WHERE {cls.default_user_id}=({User.get_user_id(kwargs['bot_user_id'])})"
         )
