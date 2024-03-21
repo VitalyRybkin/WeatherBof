@@ -39,7 +39,7 @@ def api_search_location(loc_name) -> Response:
             f"https://api.weatherapi.com/v1/search.json?key={API_TOKEN}&q={loc_name}&aqi=no"
         )
     except requests.exceptions.RequestException as re:
-        logging.warning("Search location error: ", re)
+        logger.warning("Search location error: ", re)
 
 
 def get_current_weather(loc_id, bot_user_id) -> str:
@@ -57,7 +57,7 @@ def get_current_weather(loc_id, bot_user_id) -> str:
             f"https://api.weatherapi.com/v1/current.json?key={API_TOKEN}&q=id:{loc_id}&aqi=no"
         ).json()
     except requests.exceptions.RequestException as re:
-        logging.warning("Current weather request error: ", re)
+        logger.warning("Current weather request error: ", re)
 
     for key, val in get_user_settings.items():
         if key == "humidity" and val == 0:
@@ -109,7 +109,7 @@ def get_daily_forecast_weather(loc_id, bot_user_id, days):
             f"https://api.weatherapi.com/v1/forecast.json?key={API_TOKEN}&q=id:{loc_id}&days={days}&aqi=no&alerts=no"
         ).json()
     except requests.exceptions.RequestException as re:
-        logging.warning("Current weather request error: ", re)
+        logger.warning("Current weather request error: ", re)
 
     for key, val in get_daily_settings.items():
         if key == "astro" and val == 0:
@@ -170,7 +170,7 @@ def get_hourly_forecast_weather(loc_id, bot_user_id, hours):
             f"https://api.weatherapi.com/v1/forecast.json?key={API_TOKEN}&q=id:{loc_id}&days={days}&aqi=no&alerts=no"
         ).json()
     except requests.exceptions.RequestException as re:
-        logging.warning("Current weather request error: ", re)
+        logger.warning("Current weather request error: ", re)
 
     for key, val in get_hourly_settings.items():
         if key == "pressure" and val == 0:

@@ -22,11 +22,14 @@ def update_msg_id(message, new_msg: Message) -> None:
     :return: None
     """
     if not data.globals.users_dict[message.from_user.id]["message_id"] == 0:
-        bot.edit_message_reply_markup(
-            message.chat.id,
-            message_id=data.globals.users_dict[message.from_user.id]["message_id"],
-            reply_markup="",
-        )
+        try:
+            bot.edit_message_reply_markup(
+                message.chat.id,
+                message_id=data.globals.users_dict[message.from_user.id]["message_id"],
+                reply_markup="",
+            )
+        except Exception as e:
+            logger.error("Message bot found: ", e)
     data.globals.users_dict[message.from_user.id]["message_id"] = new_msg.message_id
 
 
@@ -42,14 +45,14 @@ def delete_msg(chat_id: int, user_id: int) -> None:
         try:
             bot.delete_message(chat_id, data.globals.users_dict[user_id]["message_id"])
         except Exception as e:
-            logging.error("Message bot found: ", e)
+            logger.error("Message bot found: ", e)
 
     if data.globals.users_dict[user_id]["message_list"]:
         for msg in data.globals.users_dict[user_id]["message_list"]:
             try:
                 bot.delete_message(chat_id, msg)
             except Exception as e:
-                logging.error("Message bot found: ", e)
+                logger.error("Message bot found: ", e)
         data.globals.users_dict[user_id]["message_list"].clear()
 
 
@@ -66,4 +69,4 @@ def edit_reply_msg(chat_id: int, user_id: int) -> None:
                 chat_id, data.globals.users_dict[user_id]["message_id"], reply_markup=""
             )
         except Exception as e:
-            logging.error("Message bot found: ", e)
+            logger.error("Message bot found: ", e)

@@ -24,14 +24,10 @@ import data.globals
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter("%(asctime)s | %(message)s")
+formatter = logging.Formatter("%(levelname)s | %(asctime)s | %(name)s | %(message)s")
 file_handler = logging.FileHandler("./logs/users_log.log")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
-
-# logging.basicConfig(level=logging.INFO,
-#                     filename="./logs/users_log.log",
-#                     format="%(asctime)s | %(message)s")
 
 
 @bot.message_handler(commands=["start"])
@@ -90,7 +86,7 @@ def start_command(message) -> None:
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)
 
-        logging.info(f"User registered: {user_id} | {message.from_user.first_name}")
+        logger.info(f"New user id: {user_id} | {message.from_user.first_name}")
 
     else:
         bot.send_message(

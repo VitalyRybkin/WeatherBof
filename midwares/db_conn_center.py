@@ -30,7 +30,7 @@ def read_data(query) -> list:
             result: list[tuple] = cursor.fetchall()
             connection.commit()
     except DatabaseError as e:
-        logging.error("Database read data error: ", e)
+        logger.error("Database read data error: ", e)
 
     return result
 
@@ -47,7 +47,7 @@ def write_data(query) -> None:
             cursor.execute(query)
             connection.commit()
     except DatabaseError as e:
-        logging.error("Database write data error: ", e)
+        logger.error("Database write data error: ", e)
 
 
 def read_data_row(query) -> list[dict[str, Any]]:
@@ -64,6 +64,6 @@ def read_data_row(query) -> list[dict[str, Any]]:
             result: list = cursor.fetchall()
             connection.commit()
     except DatabaseError as e:
-        logging.error("Database read data (row) error: ", e)
+        logger.error("Database read data (row) error: ", e)
 
     return [dict(row) for row in result]
