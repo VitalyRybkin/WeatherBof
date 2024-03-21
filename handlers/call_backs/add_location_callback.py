@@ -38,8 +38,8 @@ def add_location_to_db(call) -> None:
     :param call:
     :return: None
     """
-    parse_call_data = call.data.split("|")
-    loc_info = ""
+    parse_call_data: str = call.data.split("|")
+    loc_info: str = ""
 
     if parse_call_data[1] == "favorite":
         bot.send_message(call.message.chat.id, "\U00002705 Favorite location set!")

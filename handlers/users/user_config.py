@@ -4,7 +4,11 @@ from telebot import types
 from telebot.types import InlineKeyboardMarkup, Message
 
 import data
-from keyboards.inline.inline_buttons import inline_save_settings_btn, inline_exit_btn
+from keyboards.inline.inline_buttons import (
+    inline_save_settings_btn,
+    inline_exit_btn,
+    inline_cancel_btn,
+)
 from loader import bot
 from midwares.db_conn_center import read_data_row
 from midwares.sql_lib import User
@@ -59,7 +63,7 @@ def settings_change_output(chat_id, message, user_id) -> None:
     markup.add(types.InlineKeyboardButton(metric, callback_data="metric"))
     markup.add(types.InlineKeyboardButton(reply_menu, callback_data="reply_menu"))
     markup.add(inline_save_settings_btn(User.table_name))
-    markup.add(inline_exit_btn())
+    markup.add(inline_cancel_btn())
 
     delete_msg(chat_id, user_id)
     msg: Message = bot.send_message(

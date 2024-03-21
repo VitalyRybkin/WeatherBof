@@ -21,7 +21,7 @@ def onetouch(message) -> None:
     get_user_settings = read_data_row(
         Default.get_default_settings(bot_user_id=message.from_user.id)
     )
-    ic(get_user_settings)
+
     if get_user_settings[0]["current_weather"]:
         bot.set_state(message.from_user.id, States.my_prompt, message.chat.id)
         get_users_location = read_data_row(

@@ -1,3 +1,5 @@
+import logging
+
 from telebot import types
 from telebot.types import (
     Message,
@@ -18,6 +20,18 @@ from states.bot_states import States
 from utils.global_functions import delete_msg
 from utils.reply_center import Reply
 import data.globals
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter("%(asctime)s | %(message)s")
+file_handler = logging.FileHandler("./logs/users_log.log")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+# logging.basicConfig(level=logging.INFO,
+#                     filename="./logs/users_log.log",
+#                     format="%(asctime)s | %(message)s")
 
 
 @bot.message_handler(commands=["start"])
@@ -72,16 +86,13 @@ def start_command(message) -> None:
             data.globals.users_dict[user_id]["message_id"] = 0
             data.globals.users_dict[user_id]["message_list"] = []
             data.globals.users_dict[user_id]["chat_id"] = chat_id
-            # TODO delete/edit messages
 
         if bot.get_state(user_id, chat_id):
             bot.delete_state(user_id, chat_id)
+
+        logging.info(f"User registered: {user_id} | {message.from_user.first_name}")
+
     else:
-        # if not data.globals.users_dict[message.from_user.id]['message_id'] == 0:
-        #     bot.edit_message_reply_markup(
-        #         message.chat.id,
-        #         message_id=data.globals.users_dict[message.from_user.id]['message_id'],
-        #         reply_markup="")
         bot.send_message(
             chat_id,
             f"Hello, {message.from_user.first_name}!\n" f"Welcome back!",
