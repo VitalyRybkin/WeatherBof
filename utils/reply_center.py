@@ -50,7 +50,7 @@ class Reply:
             "thing's are not that simple, but I believe in you! Type again, pls!",
         ]
         self.__help: dict = {
-            # "/start": "Start weathering, start seeing the future!",
+            "/takealook": "Take a look at location forecast you interested in!",
             "/my": "weather of your favorite location (just set one).",
             "/onetouch": "weather forecast of your favorite location upon your "
             "default settings.",

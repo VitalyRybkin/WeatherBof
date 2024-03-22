@@ -23,3 +23,4 @@ class ButtonSigns:
     daily_weather: str = "\U0001F4C6 Daily"
     save_settings: str = "\U00002705 Save"
     exit: str = "\U00002B05 Exit"
+    display_location: str = "\U00002705 Display"

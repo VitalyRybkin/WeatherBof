@@ -2,7 +2,6 @@ import atexit
 import copy
 import json
 
-# import pickle
 import signal
 import sqlite3
 
@@ -29,7 +28,7 @@ from handlers.users import (
     wishlist,
     user_config,
     default_config,
-    commands_handling,
+    commands_handling, glance,
 )
 from utils.notifications import admin_notify, stopped
 from utils.bot_commands import set_menu_commands
@@ -54,6 +53,7 @@ bot.register_message_handler(default_callback)
 bot.register_message_handler(add_location_callback)
 bot.register_message_handler(wishlist_callback)
 bot.register_message_handler(settings_callback)
+bot.register_message_handler(glance)
 bot.register_message_handler(commands_handling)
 
 

@@ -72,11 +72,6 @@ def search_location(message) -> None:
     user_id: int = message.from_user.id
 
     delete_msg(chat_id, user_id)
-    # if not data.globals.users_dict[user_id]["message_id"] == 0:
-    #     delete_msg(chat_id, user_id)
-    #     data.globals.users_dict[user_id]["message_id"] = 0
-
-    # edit_reply_msg(chat_id, user_id)
 
     bot_answer_formatting: list = [
         _.lower().capitalize() for _ in re.split("\\s+|-", message.text.strip())

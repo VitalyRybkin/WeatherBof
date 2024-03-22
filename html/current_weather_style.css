@@ -28,6 +28,8 @@ table {
     font-family: "Protest Riot", sans-serif;
     font-size: 25px;
     color: #900000;
+    padding: 0 5px;
+    text-align: center;
 }
 
 .img {

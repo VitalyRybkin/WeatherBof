@@ -117,3 +117,9 @@ def inline_save_settings_btn(which):
     return types.InlineKeyboardButton(
         ButtonSigns.save_settings, callback_data=f"Save|{which}"
     )
+
+
+def inline_display_btn(loc_id: str, loc_name: str):
+    return types.InlineKeyboardButton(
+        ButtonSigns.display_location, callback_data=f"Display_location|{loc_id}|{loc_name}"
+    )

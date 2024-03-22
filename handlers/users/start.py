@@ -88,6 +88,19 @@ def start_command(message) -> None:
 
         logger.info(f"New user id: {user_id} | {message.from_user.first_name}")
 
+        bot.set_state(user_id, States.start, chat_id)
+
+        markup: InlineKeyboardMarkup = types.InlineKeyboardMarkup()
+        cancel: InlineKeyboardButton = inline_cancel_btn()
+        set_city: InlineKeyboardButton = inline_set_location_prompt_btn()
+        set_city_keyboard: InlineKeyboardMarkup = markup.add(set_city, cancel)
+
+        msg: Message = bot.send_message(
+            chat_id,
+            "Would you /set your favorite location?",
+            reply_markup=set_city_keyboard,
+        )
+        data.globals.users_dict[user_id]["message_id"] = msg.message_id
     else:
         bot.send_message(
             chat_id,

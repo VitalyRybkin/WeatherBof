@@ -11,12 +11,12 @@ from midwares.api_conn_center import (
 from midwares.db_conn_center import read_data_row
 from midwares.sql_lib import Hourly, Daily, Current, User
 from states.bot_states import States
-from utils.global_functions import edit_reply_msg
+from utils.global_functions import edit_reply_msg, delete_msg
 
 
 @bot.callback_query_handler(
     func=lambda call: call.data
-    in [f"{Hourly.table_name}_display", f"{Daily.table_name}_display"]
+                      in [f"{Hourly.table_name}_display", f"{Daily.table_name}_display"]
 )
 def set_weather_display(call) -> None:
     """
@@ -82,38 +82,52 @@ def display_daily_weather(call):
 
 def daily_weather(user, chat, days):
     bot.delete_state(user, chat)
-    query = User.get_user_location_info(bot_user_id=user)
-    loc_id = read_data_row(query)[0]
-    forecast_weather_pic = get_daily_forecast_weather(loc_id["id"], user, days)
+    if States.my_prompt.loc_id is not None:
+        loc_id = States.my_prompt.loc_id
+        States.my_prompt.loc_name = None
+        States.my_prompt.loc_id = None
+    else:
+        query = User.get_user_location_info(bot_user_id=user)
+        loc_id = read_data_row(query)[0]["id"]
+
+    forecast_weather_pic = get_daily_forecast_weather(loc_id, user, days)
     with open(forecast_weather_pic, "rb") as p:
         bot.send_photo(chat, p)
+
+    delete_msg(chat, user)
     data.globals.users_dict[user]["message_id"] = 0
 
 
 @bot.callback_query_handler(func=lambda call: f"{Hourly.table_name}|hour|" in call.data)
 def display_hourly_weather(call):
-    # query = User.get_user_location_info(bot_user_id=call.from_user.id)
-    # loc_id = read_data_row(query)[0]
-    # parsed_call_data = call.data.split("|")
-    #
-    # forecast_weather_pic_arr = get_hourly_forecast_weather(
-    #     loc_id["id"], call.from_user.id, parsed_call_data[2]
-    # )
-    # for forecast_weather_pic in forecast_weather_pic_arr:
-    #     with open(forecast_weather_pic, "rb") as p:
-    #         bot.send_photo(call.message.chat.id, p)
-    # data.globals.users_dict[call.from_user.id]["message_id"] = 0
     parsed_call_data = call.data.split("|")
     hourly_weather(call.from_user.id, call.message.chat.id, parsed_call_data[2])
 
 
 def hourly_weather(user, chat, hours):
     bot.delete_state(user, chat)
-    query = User.get_user_location_info(bot_user_id=user)
-    loc_id = read_data_row(query)[0]
+    if States.my_prompt.loc_id is not None:
+        loc_id = States.my_prompt.loc_id
+        States.my_prompt.loc_name = None
+        States.my_prompt.loc_id = None
+    else:
+        query = User.get_user_location_info(bot_user_id=user)
+        loc_id = read_data_row(query)[0]["id"]
 
-    forecast_weather_pic_arr = get_hourly_forecast_weather(loc_id["id"], user, hours)
+    forecast_weather_pic_arr = get_hourly_forecast_weather(loc_id, user, hours)
     for forecast_weather_pic in forecast_weather_pic_arr:
         with open(forecast_weather_pic, "rb") as p:
             bot.send_photo(chat, p)
+
+    delete_msg(chat, user)
     data.globals.users_dict[user]["message_id"] = 0
+
+
+@bot.callback_query_handler(func=lambda call: f"Display_location" in call.data)
+def display_weather(call):
+    parsed_call_data = call.data.split("|")
+    States.my_prompt.loc_name = parsed_call_data[2]
+    States.my_prompt.loc_id = parsed_call_data[1]
+    States.my_prompt.user_id = call.from_user.id
+    bot.set_state(call.from_user.id, States.my_prompt, call.message.chat.id)
+    my_prompt_msg(call.message)
